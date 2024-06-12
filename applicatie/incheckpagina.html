@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/style.css">
+    <title>Gelre airport</title>
+</head>
+<body>
+    <header class="titel">
+        <a href="index.html">
+            <img 
+            src="images/gelreairportlogo.png" 
+            alt="Gelre airport logo"
+            width="200"
+            height="200"
+            />
+            <h1>Gelre airport</h1>
+            </a>
+        </header>
+    
+        <div class="menu">
+            <div class="menuitem"><a href="index.html">Startpagina</a></div>
+            <div class="menuitem"><a href="incheckpagina.html">Inchecken</a></div>
+            <div class="menuitem"><a href="vluchtenoverzicht.html">Vluchtenoverzicht</a></div>
+            <div class="menuitem"><a href="medewerkerinlogpagina.html">Medewerker</a></div>
+        </div>
+    <main>
+        <h3>Inchecken:</h3>
+        <div class="gridform">
+        <form method="post" action="mijnvluchten.html">
+            <div class="formitem">
+                <label for="ticketnummer">Ticketnummer: (GELRVLCHT...)</label>
+                <input required 
+                type="text" 
+                name="ticketnummer" 
+                id="ticketnummer"
+                pattern="GELRVLCHT.*" 
+                title="Ticketnummer moet starten met GELRVLCHT..." 
+                placeholder="GELRVLCHT..."
+                />
+            </div>
+
+            <div class="formitem">
+                <label for="vluchtnummer">Vluchtnummer: (KLMGELR...)</label>
+                <input required 
+                type="text" 
+                name="vluchtnummer" 
+                id="vluchtnummer"
+                pattern="KLMGELR.*" 
+                title="Vluchtnummer moet starten met KLMGELR..." 
+                placeholder="KLMGELR..."
+                />
+            </div>
+            <!-- https://chat.openai.com/share/bb7700a9-906a-4660-9565-46d9e687b05c voor pattern en title hierboven!-->
+            
+            <div class="formitem">
+                <label for="firstname">Voornaam</label>
+                <input required 
+                type="text" 
+                name="firstname" 
+                id="firstname"
+                placeholder="Voornaam"
+                />
+            </div>
+            
+            <div class="formitem">
+                <label for="lastname">Achternaam</label>
+                <input 
+                required 
+                type="text" 
+                name="lastname" 
+                id="lastname"
+                placeholder="Achternaam"
+                />
+            </div>
+                      
+            <div class="formitem">
+                <label for="koffergewicht">Koffergewicht</label>
+                <select required name="koffergewicht" id="koffergewicht">
+                    <option value="">Maak een keuze</option>
+                    <option value="10">10kg</option>
+                    <option value="20">20kg</option>
+                    <option value="30">30kg</option>
+                    <option value="40">40kg</option>
+                </select>
+            </div>
+            
+            <div class="formitem">
+                <label for="koffergewicht2">Koffergewicht koffer 2 (optioneel)</label>
+                <select name="koffergewicht2" id="koffergewicht2">
+                    <option value="">Maak een keuze</option>
+                    <option value="10">10kg</option>
+                    <option value="20">20kg</option>
+                    <option value="30">30kg</option>
+                    <option value="40">40kg</option>
+                </select>
+            </div>
+            <input 
+            type="submit" 
+            value="Check in!"
+            />
+        </form>
+    </div>
+        <div class="grid">
+            <div class="blokje2">
+                <h4>Meer dan 2 koffers?</h4>
+                <p>Klik dan <strong><a href="kofferextra.html">hier!</a></strong></p>
+
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <a href="https://www.han.nl">
+            <img 
+            src="images/gelreairportlogo.png" 
+            alt="Gelre Airport"
+            width="200"
+            height="200"
+            />
+        </a>
+        &copy; 2023 Christiaan Smits
+        <a href="privacyverklaring.html">Privacyverklaring.</a>
+    </footer>
+</body>
+</html>

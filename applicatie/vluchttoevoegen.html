@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/style.css">
+    <title>Gelre airport</title>
+</head>
+<body>
+
+    <header class="titel">
+        <a href="index.html">
+            <img 
+            src="images/gelreairportlogo.png" 
+            alt="Gelre airport logo"
+            width="200"
+            height="200"
+            />
+            <h1>Gelre airport</h1>
+            </a>
+        </header>
+
+        <div class="menu">
+            <div class="menuitem"><a href="index.html">Startpagina</a></div>
+            <div class="menuitem"><a href="incheckpagina.html">Inchecken</a></div>
+            <div class="menuitem"><a href="vluchtenoverzicht.html">Vluchtenoverzicht</a></div>
+            <div class="menuitem"><a href="medewerkerinlogpagina.html">Medewerker</a></div>
+        </div>
+
+    <main>
+
+        <h2>Maak vlucht aan</h2>
+
+        <div class="gridform">
+        <form method="post" action="vluchtenoverzicht.html">
+            <div class="formitem">
+                <label for="bestemming">Bestemming</label>
+                <select required name="bestemming" id="bestemming">
+                    <option value="">Maak een keuze</option>
+                    <option value="lax">LAX</option>
+                    <option value="duckstad">DUC</option>
+                    <option value="almere">ALM</option>
+                    <option value="nyc">NYC</option>
+                    <option value="bir">BIR</option>
+                </select>
+            </div>
+            
+
+            <div class="formitem">
+                <label for="vertrekdatum">Vertrekdatum</label>
+                <input type="date" name="vertrekdatum" id="vertrekdatum">
+            </div>
+
+            <div class="formitem">
+                <label for="vertrektijd">Vertrektijd</label>
+                <input type="time" name="vertrektijd" id="vertrektijd">
+            </div>
+
+            <div class="formitem">
+                <label for="duur">Duur</label>
+                <input 
+                required 
+                type="text" 
+                name="duur" 
+                id="duur"
+                placeholder=".. uur en .. min"
+                />
+            </div>
+
+            <div class="formitem">
+                <label for="prijs">Prijs</label>
+                <input 
+                required 
+                type="text" 
+                name="prijs" 
+                id="prijs"
+                placeholder="&euro;..."
+                />
+            </div>
+
+            <input type="submit" value="Maak nieuwe vlucht aan!" />
+        </form>
+    </div>
+    </main>
+
+    <footer>
+        <a href="https://www.han.nl">
+            <img 
+            src="images/gelreairportlogo.png" 
+            alt="Gelre Airport"
+            width="200"
+            height="200"
+            />
+        </a>
+        &copy; 2023 Christiaan Smits
+        <a href="privacyverklaring.html">Privacyverklaring.</a>
+    </footer>
+</body>
+</html>

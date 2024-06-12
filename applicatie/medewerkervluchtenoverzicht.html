@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/style.css">
+
+    <title>Vluchtenoverzicht</title>
+</head>
+<body>
+    <header class="titel">
+        <a href="index.html">
+            <img 
+            src="images/gelreairportlogo.png" 
+            alt="Gelre airport logo"
+            width="200"
+            height="200"
+            />
+            <h1>Gelre airport</h1>
+            </a>
+        </header>
+
+    <div class="menu">
+        <div class="menuitem"><a href="index.html">Startpagina</a></div>
+        <div class="menuitem"><a href="incheckpagina.html">Inchecken</a></div>
+        <div class="menuitem"><a href="vluchtenoverzicht.html">Vluchtenoverzicht</a></div>
+        <div class="menuitem"><a href="medewerkerinlogpagina.html">Medewerker</a></div>
+    </div>
+    <main>
+        <h2>Overzicht</h2>
+        <p>Overzicht van alle vluchten, klik voor meer info!</p>
+
+        <h3>Per locatie</h3>
+        <div class="grid">
+            <div class="blokje">
+                <a href="losangelesvluchten.html">
+                <h4>Los Angeles</h4>
+                <p>
+                    <img 
+                    src="images/losangelesinternationalairport-1.jpg" 
+                    alt="LAX Airport"
+                    width="200"
+                    height="200"
+                    />
+                </p>
+                </a>
+            </div> 
+            <div class="blokje">
+                <a href="template.html">
+                    <h4>Duckstad</h4>
+                    <p>
+                        <img 
+                        src="images/duckipedia-duckstad-png.png" 
+                        alt="Duckstad"
+                        width="200"
+                        height="200"
+                        />
+                    </p>
+                    </a>
+            </div>
+            <div class="blokje">
+                <a href="template.html">
+                    <h4>New York</h4>
+                    <p>
+                        <img 
+                        src="images/21028.jpeg" 
+                        alt="New York"
+                        width="200"
+                        height="200"
+                        />
+                    </p>
+                    </a>
+            </div>   
+            <div class="blokje">
+                <a href="template.html">
+                    <h4>Almere</h4>
+                    <p>
+                        <img 
+                        src="images/Almere_Campus.jpg" 
+                        alt="Almere"
+                        width="200"
+                        height="200"
+                        />
+                    </p>
+                    </a>
+            </div>     
+            <div class="blokje">
+                <a href="template.html">
+                    <h4>Birmingham</h4>
+                    <p>
+                        <img 
+                        src="images/608465l5.jpg" 
+                        alt="Birmingham"
+                        width="200"
+                        height="200"
+                        />
+                    </p>
+                    </a>
+            </div>
+        </div>
+        <h3>Alle vluchten</h3>
+        <hr>
+        <h3>Sorteren op:</h3>
+
+        <div class="grid">
+            <div class="formitem">
+                <label for="vluchtnummer">Vluchtnummer</label>
+                <input type="text" name="vluchtnummer" id="vluchtnummer">
+            </div>
+            </div>
+        <div class="grid">
+        <div class="formitem">
+            <label for="vluchthaven">Vluchthaven</label>
+            <select name="vluchthaven" id="vluchthaven">
+                <option value="empty">Maak een keuze</option>
+                <option value="lax">LAX</option>
+                <option value="duc">DUC</option>
+                <option value="alm">ALM</option>
+                <option value="nyc">NYC</option>
+                <option value="bir">BIR</option>
+            </select>
+        </div>
+        </div>
+        <div class="grid">
+        <div class="formitem">
+            <label for="vertrektijd">Vertrektijd</label>
+            <input type="time" name="vertrektijd" id="vertrektijd">
+        </div>
+        </div>              
+        <hr>
+        <div>
+        <table>          
+            <tr>
+                <th>Vluchtnummer</th>
+                <th>Vluchthaven</th>
+                <th>Gate</th>
+                <th>Vertrektijd</th>
+                <th>Duur</th>
+                <th>Prijs</th>
+                <th>Passagiers</th>
+                <th>Kg</th>
+            </tr>
+
+            <tr>
+                <td>KLMGELR653861</td>
+                <td>LAX</td>
+                <td>Gate 5</td>
+                <td>22/11/23 01:00</td>
+                <td>7 uur</td>
+                <td>&euro;237</td>
+                <td>137/250</td>
+                <td>500/5000kg</td>
+            </tr>
+
+            <tr>
+                <td>KLMGELR374963</td>
+                <td>LAX</td>
+                <td>Gate 3</td>
+                <td>27/11/23 15:00</td>
+                <td>7 uur</td>
+                <td>&euro;248</td>
+                <td>137/250</td>
+                <td>500/5000kg</td>
+            </tr>
+            <tr>
+                <td>KLMGELR734821</td>
+                <td>LAX</td>
+                <td>Gate 12</td>
+                <td>22/12/23 01:00</td>
+                <td>7 uur</td>
+                <td>&euro;237</td>
+                <td>137/250</td>
+                <td>500/5000kg</td>
+            </tr>
+
+            <tr>
+                <td>KLMGELR764295</td>
+                <td>LAX</td>
+                <td>Gate 11</td>
+                <td>27/12/23 15:00</td>
+                <td>7 uur</td>
+                <td>&euro;248</td>
+                <td>137/250</td>
+                <td>500/5000kg</td>
+            </tr>
+            <tr>
+                <td>KLMGELR794010</td>
+                <td>LAX</td>
+                <td>Gate 8</td>
+                <td>02/01/24 01:00</td>
+                <td>7 uur</td>
+                <td>&euro;237</td>
+                <td>137/250</td>
+                <td>500/5000kg</td>
+            </tr>
+
+            <tr>
+                <td>KLMGELR123456</td>
+                <td>LAX</td>
+                <td>Gate 2</td>
+                <td>02/01/24 15:00</td>
+                <td>7 uur</td>
+                <td>&euro;248</td>
+                <td>137/250</td>
+                <td>500/5000kg</td>
+            </tr>
+            <tr>
+                <td>KLMGELR903342</td>
+                <td>LAX</td>
+                <td>Gate 6</td>
+                <td>22/01/24 01:00</td>
+                <td>7 uur</td>
+                <td>&euro;237</td>
+                <td>137/250</td>
+                <td>500/5000kg</td>
+            </tr>
+
+            <tr>
+                <td>KLMGELR962852</td>
+                <td>LAX</td>
+                <td>Gate 5</td>
+                <td>27/01/24 15:00</td>
+                <td>7 uur</td>
+                <td>&euro;248</td>
+                <td>137/250</td>
+                <td>500/5000kg</td>
+            </tr>  
+        </table>
+    </div>
+    </main>
+
+    <footer>
+        <a href="https://www.han.nl">
+            <img 
+            src="images/gelreairportlogo.png" 
+            alt="Gelre Airport"
+            width="200"
+            height="200"
+            />
+        </a>
+        &copy; 2023 Christiaan Smits
+        <a href="privacyverklaring.html">Privacyverklaring.</a>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/style.css">
+    <title>Gelre airport</title>
+</head>
+<body>
+
+    <header class="titel">
+        <a href="index.html">
+            <img 
+            src="images/gelreairportlogo.png" 
+            alt="Gelre airport logo"
+            width="200"
+            height="200"
+            />
+            <h1>Gelre airport</h1>
+            </a>
+        </header>
+
+        <div class="menu">
+            <div class="menuitem"><a href="index.html">Startpagina</a></div>
+            <div class="menuitem"><a href="incheckpagina.html">Inchecken</a></div>
+            <div class="menuitem"><a href="vluchtenoverzicht.html">Vluchtenoverzicht</a></div>
+            <div class="menuitem"><a href="medewerkerinlogpagina.html">Medewerker</a></div>
+        </div>
+
+    <main>
+
+        <h2>Maak nieuwe passagier aan:</h2>
+
+        <div class="gridform">
+        <form method="post" action="medewerkeroverzicht.html">
+            <div class="formitem">
+                <label for="vluchtnummer">Vluchtnummer: (KLMGELR...)</label>
+                <input required 
+                type="text" 
+                name="vluchtnummer" 
+                id="vluchtnummer"
+                pattern="KLMGELR.*" 
+                title="Vluchtnummer moet starten met KLMGELR..." 
+                placeholder="KLMGELR..."
+                />
+            </div>
+
+            <div class="formitem">
+                <label for="firstname">Voornaam</label>
+                <input required 
+                type="text" 
+                name="firstname" 
+                id="firstname"
+                />
+            </div>
+            
+            <div class="formitem">
+                <label for="lastname">Achternaam</label>
+                <input 
+                required 
+                type="text" 
+                name="lastname" 
+                id="lastname"
+                />
+            </div>
+            
+            <div class="formitem">
+                <label for="email">Email</label>
+                <input required 
+                type="email" 
+                name="email" 
+                id="email"
+                />
+            </div>
+            
+            <div class="formitem">
+                <label for="gender">Geslacht</label>
+                <select required name="gender" id="gender">
+                    <option value="">Maak een keuze</option>
+                    <option value="male">Man</option>
+                    <option value="female">Vrouw</option>
+                    <option value="niks">Niks</option>
+                    <option value="dontsay">Wil niet zeggen</option>
+                </select>
+            </div>
+
+            <input type="submit" value="Meld passagier aan!" />
+        </form>
+    </div>
+
+    </main>
+
+    <footer>
+        <a href="https://www.han.nl">
+            <img 
+            src="images/gelreairportlogo.png" 
+            alt="Gelre Airport"
+            width="200"
+            height="200"
+            />
+        </a>
+        &copy; 2023 Christiaan Smits
+        <a href="privacyverklaring.html">Privacyverklaring.</a>
+    </footer>
+</body>
+</html>
