@@ -61,6 +61,39 @@ function maakFooter()
     return $html;
 }
 
+function vluchtSortering($vluchtnummer, $vluchthaven)
+{
+    if ($vluchtnummer !== '' && is_numeric($vluchtnummer)) // kijkt of vluchtnummer een nummer is en niet leeg 
+    {
+        if ($vluchthaven !== '')
+        {
+            $extraWhere = "vluchtnummer = '" . $vluchtnummer . "' AND bestemming = '". $vluchthaven ."'"; 
+            $query = krijgTabel("Vlucht", $extraWhere);
+        }
+        else 
+        {
+            $extraWhere = "vluchtnummer = '" . $vluchtnummer . "'"; 
+            $query = krijgTabel("Vlucht", $extraWhere);    
+        }
+    } 
+    else 
+    {
+        if ($vluchthaven !== '')
+        {
+            $extraWhere = "bestemming = '". $vluchthaven ."'"; 
+            // echo $extraWhere;
+            $query = krijgTabel("Vlucht", $extraWhere);
+            // print_r($query);
+            
+        }
+        else 
+        {
+            $query = krijgTabel("Vlucht");
+        }
+    }
+    return $query;
+}
+
 // ----------------------------- einde algemene functies------------------------- 
 
 
@@ -124,34 +157,7 @@ function maakAlleVluchten()
     $vluchthaven = isset($_GET['vluchthaven']) ? htmlspecialchars($_GET['vluchthaven']) : ''; // vluchthaven sanitizen
     // echo $vluchthaven;
 
-    if ($vluchtnummer !== '' && is_numeric($vluchtnummer)) // kijkt of vluchtnummer een nummer is en niet leeg 
-    {
-        if ($vluchthaven !== '')
-        {
-            $extraWhere = "vluchtnummer = '" . $vluchtnummer . "' AND bestemming = '". $vluchthaven ."'"; 
-            $query = krijgTabel("Vlucht", $extraWhere);
-        }
-        else 
-        {
-            $extraWhere = "vluchtnummer = '" . $vluchtnummer . "'"; 
-            $query = krijgTabel("Vlucht", $extraWhere);    
-        }
-    } 
-    else 
-    {
-        if ($vluchthaven !== '')
-        {
-            $extraWhere = "bestemming = '". $vluchthaven ."'"; 
-            // echo $extraWhere;
-            $query = krijgTabel("Vlucht", $extraWhere);
-            // print_r($query);
-            
-        }
-        else 
-        {
-            $query = krijgTabel("Vlucht");
-        }
-    }
+    $query = vluchtSortering($vluchtnummer, $vluchthaven);
 
     $html = '<div>';
     $html .= '<table>';
@@ -235,15 +241,23 @@ function maakInlogpagina()
 {
     $html = '';
 
+    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["inloggen"]))
+    {
+        if (is_numeric($_POST["username"])){ $passagiernummer = htmlspecialchars($_POST["username"]); } else { $passagiernummer = 0; }
+        $wachtwoord = htmlspecialchars($_POST["password"]);
+        $wachtwoordHash = password_hash($wachtwoord, PASSWORD_DEFAULT);
+        $html .= valideerLogin($passagiernummer, $wachtwoord);
+    }
+
     $html .= '
             <div class="gridform">
-                <form method="post" action="mijnvluchten.html">
+                <form method="post" action="">
                     <div class="formitem">
-                        <label for="username">Gebruikersnaam</label>
+                        <label for="username">Passagiersnummer</label>
                         <input 
                         required
-                        pattern="[a-zA-z0-9]+"
-                        title="Eem Gebruikersnaam mag alleen bestaan uit alfanumerieke waarden"
+                        pattern="[0-9]+"
+                        title="Passagiersnummer mag alleen bestaan uit nummers"
                         type="text" 
                         name="username" 
                         id="username"
@@ -258,13 +272,49 @@ function maakInlogpagina()
                         id="password"
                         />
                     </div>
-                    <input class="knopbreedte" type="submit" value="Meld je aan!" />
+                    <button type="sumbit" name="inloggen">Log in</button>
                 <p>Nog geen account? <a id="zwartelink" href="registratieformulier.php">Klik dan hier!</a></p>
                 </form>
             </div>';
 
 
     return $html;
+}
+
+function valideerLogin($gebruikersnaam, $wachtwoord)
+{
+    $valideer = inloggen($gebruikersnaam, $wachtwoord);
+    if ($valideer)
+    {
+        ob_end_clean();
+        $_SESSION['gebruikersnaam'] = $gebruikersnaam;
+        $_SESSION['loggedIn'] = true; 
+        return loginMelding("Goed");
+    }
+    else 
+    {
+        return loginMelding("Fout");
+    }
+}
+
+function loginMelding($goedOfFout)
+{
+    if ($goedOfFout == "Goed")
+    {
+        $url = " mijnvluchten.html";
+        header("Location: $url");
+        exit();
+    }
+    elseif ($goedOfFout == "Fout")
+    {
+        $html = '<h2>Ingevulde gegevens zijn fout</h2>';
+        return $html;
+    }
+    elseif ($goedOfFout == "NummerFout")
+    {
+        $html = '<h2>Passagiersnummer moet een nummer zijn</h2>';
+        return $html;
+    }
 }
 
 // ----------------------------- einde inlogpagina.php ----------------------------- 

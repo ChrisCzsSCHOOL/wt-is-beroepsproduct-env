@@ -54,4 +54,37 @@ function formatDate($datum)
     return $datum;
 }
 
+function inloggen($passagiernummer, $wachtwoord)
+{
+    $db = maakVerbinding();
+    $sql = "SELECT * FROM Passagier WHERE passagiernummer = :passagiernummer";
+
+    $stmt = $db->prepare($sql);
+    $stmt->bindParam(':passagiernummer', $passagiernummer);
+    $stmt->execute();
+    $gebruiker = $stmt->fetch(PDO::FETCH_ASSOC); 
+
+    if ($gebruiker) // kijkt of gebruiker bestaat.
+    {
+        echo "gebruiker if statement";
+        echo $gebruiker['wachtwoord'];
+        echo $wachtwoord;
+        if ($wachtwoord == $gebruiker['wachtwoord'])
+        {
+            $check = true;
+            echo "Passagier geverifieerd";
+        }
+        else 
+        {
+            $check = false;
+        }
+    }
+    else 
+    {
+        $check = false;
+    }
+
+    return $check;
+}
+
 ?>
