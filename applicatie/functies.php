@@ -63,6 +63,8 @@ function maakFooter()
 
 // ----------------------------- einde algemene functies------------------------- 
 
+
+// ----------------------------- index.php ----------------------------- 
 function maakIndexMenu() 
 {
     $html = "";
@@ -111,4 +113,159 @@ function maakIndexMenu()
     return $html;
 }
 
+// ----------------------------- einde index.php ----------------------------- 
+
+
+// ----------------------------- begin allevluchten.php ----------------------------- 
+
+function maakAlleVluchten()
+{
+    $vluchtnummer = isset($_GET['vluchtnummer']) ? htmlspecialchars($_GET['vluchtnummer']) : ''; // vluchtnummer sanitizen
+    $vluchthaven = isset($_GET['vluchthaven']) ? htmlspecialchars($_GET['vluchthaven']) : ''; // vluchthaven sanitizen
+    // echo $vluchthaven;
+
+    if ($vluchtnummer !== '' && is_numeric($vluchtnummer)) // kijkt of vluchtnummer een nummer is en niet leeg 
+    {
+        if ($vluchthaven !== '')
+        {
+            $extraWhere = "vluchtnummer = '" . $vluchtnummer . "' AND bestemming = '". $vluchthaven ."'"; 
+            $query = krijgTabel("Vlucht", $extraWhere);
+        }
+        else 
+        {
+            $extraWhere = "vluchtnummer = '" . $vluchtnummer . "'"; 
+            $query = krijgTabel("Vlucht", $extraWhere);    
+        }
+    } 
+    else 
+    {
+        if ($vluchthaven !== '')
+        {
+            $extraWhere = "bestemming = '". $vluchthaven ."'"; 
+            // echo $extraWhere;
+            $query = krijgTabel("Vlucht", $extraWhere);
+            // print_r($query);
+            
+        }
+        else 
+        {
+            $query = krijgTabel("Vlucht");
+        }
+    }
+
+    $html = '<div>';
+    $html .= '<table>';
+    $html .= '
+            <tr>
+                <th>Vluchtnummer</th>
+                <th>Bestemming</th>
+                <th>Vertrektijd</th>
+                <th>Gatecode</th>
+            </tr>
+    ';
+
+    foreach ($query as $rij)
+    {
+        $html .= '<tr>';
+        $html .= '<td>'. $rij['vluchtnummer'] .'</td>';
+        $html .= '<td>'. $rij['bestemming'] .'</td>';
+        $html .= '<td>'. formatDate($rij['vertrektijd']).' '. formatTime($rij['vertrektijd']) .'</td>';
+        $html .= '<td>Gate '. $rij['gatecode'] .'</td>'; 
+        $html .= '</tr>';
+    }
+
+    $html .= '</table>';
+    $html .= '</div>';
+
+    return $html;
+}
+
+function maakAlleVluchtenMenu()
+{
+    $html = "";
+    $html.= '
+        <h2>Alle vluchten:</h2>
+        <h3>Sorteren op:</h3>
+
+        <form method="get" action="">
+            <div class="grid">
+                <div class="formitem">
+                    <label for="vluchtnummer">Vluchtnummer</label>
+                    <input type="text" name="vluchtnummer" id="vluchtnummer">
+                </div>
+            </div>
+            <div class="grid">
+                <div class="formitem">
+                    <label for="vluchthaven">Vluchthaven</label>
+                    <select name="vluchthaven" id="vluchthaven">
+                        <option value="">Maak een keuze</option>
+                        '. maakAlleVluchtcodes() .'
+                    </select>
+                </div>
+            </div>
+            <div class="grid">
+                <div class="formitem">
+                    <button type="submit">Submit</button>
+                </div>
+            </div>
+        </form>
+    ';
+    return $html;
+}
+
+function maakAlleVluchtcodes()
+{
+    $query = krijgTabel("Luchthaven");
+    $html = '';
+
+    foreach ($query as $rij) 
+    {
+        $html .= '<option value="'. htmlspecialchars($rij['luchthavencode']) .'">'. htmlspecialchars($rij['luchthavencode']) .'</option>';
+    }
+
+    return $html;
+}
+
+// ----------------------------- einde allevluchten.php ----------------------------- 
+
+
+// ----------------------------- begin inlogpagina.php ----------------------------- 
+
+function maakInlogpagina()
+{
+    $html = '';
+
+    $html .= '
+            <div class="gridform">
+                <form method="post" action="mijnvluchten.html">
+                    <div class="formitem">
+                        <label for="username">Gebruikersnaam</label>
+                        <input 
+                        required
+                        pattern="[a-zA-z0-9]+"
+                        title="Eem Gebruikersnaam mag alleen bestaan uit alfanumerieke waarden"
+                        type="text" 
+                        name="username" 
+                        id="username"
+                        />
+                    </div>
+                    
+                    <div class="formitem">
+                        <label for="password">Wachtwoord</label>
+                        <input required 
+                        type="password" 
+                        name="password" 
+                        id="password"
+                        />
+                    </div>
+                    <input class="knopbreedte" type="submit" value="Meld je aan!" />
+                <p>Nog geen account? <a id="zwartelink" href="registratieformulier.php">Klik dan hier!</a></p>
+                </form>
+            </div>';
+
+
+    return $html;
+}
+
+// ----------------------------- einde inlogpagina.php ----------------------------- 
 ?>
