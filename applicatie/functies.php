@@ -1,4 +1,6 @@
 <?php 
+session_start();
+ob_start();
 
 // ----------------------------- algemene functies ----------------------------- 
 function maakHeader() 
@@ -32,8 +34,8 @@ function maakHeader()
                 <div class="menu">
                     <div class="menuitem"><a href="index.php">Startpagina</a></div>
                     <div class="menuitem"><a href="allevluchten.php">Vluchtenoverzicht</a></div>
+                    <div class="menuitem"><a href="incheckpagina.php">Inchecken</a></div>
                     <div class="menuitem"><a href="inlogpagina.php">Inloggen</a></div>
-                    <div class="menuitem"><a href="inlogpagina.php">Medewerker</a></div>
                 </div>
     ';
 
@@ -531,4 +533,51 @@ function valideerRegistratie($passagiernummer, $wachtwoord, $naam, $gender)
 }
 
 // --------------------------- einde registratieformulier.php ----------------------
+
+
+// --------------------------- begin mijnvluchten.php ------------------------------
+
+function maakEigenVluchten()
+{
+    $db = maakVerbinding();
+    $sql = "select P.vluchtnummer, P.passagiernummer, V.bestemming, V.vertrektijd, P.stoel 
+             from Passagier P LEFT JOIN Vlucht V ON V.vluchtnummer = P.vluchtnummer
+             
+             WHERE passagiernummer = '". $_SESSION['gebruikersnaam']. "'";
+//";
+
+    $query = $db->prepare($sql);
+    $query->execute();
+    $queryArray = $query->setFetchMode(PDO::FETCH_ASSOC);
+    
+    $html = '';
+    $html .= '<h2>Mijn vluchten</h2>';
+    $html .= '<div><table><tr>';
+    $html .= '<th>Vluchtnummer</th>';
+    $html .= '<th>Passagiernummer</th>';
+    $html .= '<th>Bestemming</th>';
+    $html .= '<th>Vertrektijd</th>';
+    $html .= '<th>Stoelnummer</th>';
+    $html .= '</tr>';
+    
+    foreach($query as $rij)
+    {   
+        $html .= '<tr>';
+        $html .= '<td>'.$rij['vluchtnummer'].'</td>';
+        $html .= '<td>'.$rij['passagiernummer'].'</td>';
+        $html .= '<td>'.$rij['bestemming'].'</td>';
+        $html .= '<td>'. formatDate($rij['vertrektijd']).' '. formatTime($rij['vertrektijd']).'</td>';
+        $html .= '<td>'.$rij['stoel'].'</td>';
+        $html .= '</tr>';
+    }
+
+    $html .= '</table>';
+    $html .= '</div>';
+
+    return $html;
+
+}
+
+// --------------------------- einde mijnvluchten.php ------------------------------
+
 ?>
