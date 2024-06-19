@@ -7,9 +7,7 @@ include_once("functies.php");
 <?=maakHeader();?>
 
 <main>
-    <?=maakSorteringMenu('Vlucht');?>
-
-    <?=maakAlleVluchten(); // TODO sorteren op vertrektijd met klikken ?> 
+    <?= maakAllePassagiersOpVlucht();?>
 </main>
 
 <?=maakFooter();?>

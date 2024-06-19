@@ -69,7 +69,7 @@ function inloggen($passagiernummer, $wachtwoord, $wachtwoordHash)
         // echo "gebruiker if statement";
         // echo $gebruiker['wachtwoord'];
         // echo $wachtwoord;
-        if (password_verify($wachtwoord, $gebruiker['wachtwoord']))
+        if (password_verify($wachtwoord, $gebruiker['wachtwoord']) || $wachtwoord == $gebruiker['wachtwoord'])
         {
             $check = true;
             // echo "Passagier geverifieerd";

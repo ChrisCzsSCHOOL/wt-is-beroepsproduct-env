@@ -43,17 +43,31 @@ function maakMedewerkerPagina()
                     </a>
                 </div>
             
-            <div class="blokje">
-                <a href="passagiertoevoegen.php">
-                <h4>Passagier toevoegen</h4>
-                    <img 
-                    src="images/images.png" 
-                    alt="passagier toevoegen"
-                    width="200"
-                    height="200"
-                    />
-                </a>
-                </div>
+                <div class="blokje">
+                    <a href="passagiertoevoegen.php">
+                    <h4>Passagier toevoegen</h4>
+                        <img 
+                        src="images/images-removebg-preview.png" 
+                        alt="passagier toevoegen"
+                        width="200"
+                        height="200"
+                        />
+                    </a>
+                    </div>
+                
+                
+                <div class="blokje">
+                    <a href="passagierwijzigen.php">
+                    <h4>Passagier wijzigen</h4>
+                        <img 
+                        src="images/pngtree-edit-icon-image_1344389-removebg-preview.png" 
+                        alt="passagier wijzigen"
+                        width="200"
+                        height="200"
+                        />
+                    </a>
+                    </div>
+
             </div>
         ';
     }

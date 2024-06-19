@@ -36,6 +36,7 @@ function maakHeader()
                     <div class="menuitem"><a href="allevluchten.php">Vluchtenoverzicht</a></div>
                     <div class="menuitem"><a href="incheckpagina.php">Inchecken</a></div>
                     <div class="menuitem"><a href="inlogpagina.php">Inloggen</a></div>
+                    <div class="menuitem"><a href="medewerkeroverzicht.php">Medewerker</a></div>
                 </div>
     ';
 
