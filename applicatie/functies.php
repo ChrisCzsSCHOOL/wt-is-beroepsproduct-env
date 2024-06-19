@@ -164,14 +164,18 @@ function maakAlleVluchten()
 
     $html = '<div>';
     $html .= '<table>';
-    $html .= '
-            <tr>
-                <th>Vluchtnummer</th>
-                <th>Bestemming</th>
-                <th>Vertrektijd</th>
-                <th>Gatecode</th>
-            </tr>
-    ';
+    $html .= '<tr>';
+    $html .= '<th>Vluchtnummer</th>';
+    $html .= '<th>Bestemming</th>';
+    $html .= '<th>Vertrektijd</th>';
+    $html .= '<th>Gatecode</th>';
+    if (isMedewerker($_SESSION['gebruikersnaam']))
+    {
+        $html .= '<th>Max aantal</th>';
+        $html .= '<th>Max gewicht pp</th>';
+        $html .= '<th>Max totaalgewicht</th>';
+    }
+    $html .= '</tr>';
 
     foreach ($query as $rij)
     {
@@ -180,6 +184,12 @@ function maakAlleVluchten()
         $html .= '<td>'. $rij['bestemming'] .'</td>';
         $html .= '<td>'. formatDate($rij['vertrektijd']).' '. formatTime($rij['vertrektijd']) .'</td>';
         $html .= '<td>Gate '. $rij['gatecode'] .'</td>'; 
+        if (isMedewerker($_SESSION['gebruikersnaam']))
+        {
+            $html .= '<td>'.$rij['max_aantal'].'</td>';
+            $html .= '<td>'.$rij['max_gewicht_pp'].'</td>';
+            $html .= '<td>'.$rij['max_totaalgewicht'].'</td>';
+        }
         $html .= '</tr>';
     }
 
@@ -306,7 +316,7 @@ function loginMelding($goedOfFout)
     {
         if (isMedewerker($_SESSION['gebruikersnaam'])) 
         { // als de gebruikersnaam waarmee ingelogd is een werknemer is, dan moet deze doorgestuurd worden naar het medewerkeroverzicht
-            $url = "medewerkeroverzicht.php";
+            $url = "allevluchten.php";
             header("Location: $url");
             exit();
         }
@@ -539,6 +549,8 @@ function valideerRegistratie($passagiernummer, $wachtwoord, $naam, $gender)
 
 function maakEigenVluchten()
 {
+    echo $_SESSION['gebruikersnaam'];
+
     $db = maakVerbinding();
     $sql = "select P.vluchtnummer, P.passagiernummer, V.bestemming, V.vertrektijd, P.stoel 
              from Passagier P LEFT JOIN Vlucht V ON V.vluchtnummer = P.vluchtnummer
