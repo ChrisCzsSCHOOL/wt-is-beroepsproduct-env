@@ -9,7 +9,7 @@ function maakInlogpagina()
         if (is_numeric($_POST["username"])){ $passagiernummer = htmlspecialchars($_POST["username"]); } else { $passagiernummer = 0; }
         $wachtwoord = htmlspecialchars($_POST["password"]);
         $wachtwoordHash = password_hash($wachtwoord, PASSWORD_DEFAULT);
-        $html .= valideerLogin($passagiernummer, $wachtwoord);
+        $html .= valideerLogin($passagiernummer, $wachtwoord, $wachtwoordHash);
     }
 
     $html .= '
@@ -44,9 +44,9 @@ function maakInlogpagina()
     return $html;
 }
 
-function valideerLogin($gebruikersnaam, $wachtwoord)
+function valideerLogin($gebruikersnaam, $wachtwoord, $wachtwoordHash)
 {
-    $valideer = inloggen($gebruikersnaam, $wachtwoord);
+    $valideer = inloggen($gebruikersnaam, $wachtwoord, $wachtwoordHash);
     if ($valideer)
     {
         ob_end_clean();

@@ -54,7 +54,7 @@ function formatDate($datum)
     return $datum;
 }
 
-function inloggen($passagiernummer, $wachtwoord)
+function inloggen($passagiernummer, $wachtwoord, $wachtwoordHash)
 {
     $db = maakVerbinding();
     $sql = "SELECT * FROM Passagier WHERE passagiernummer = :passagiernummer";
@@ -69,7 +69,7 @@ function inloggen($passagiernummer, $wachtwoord)
         // echo "gebruiker if statement";
         // echo $gebruiker['wachtwoord'];
         // echo $wachtwoord;
-        if ($wachtwoord == $gebruiker['wachtwoord'])
+        if (password_verify($wachtwoord, $gebruiker['wachtwoord']))
         {
             $check = true;
             // echo "Passagier geverifieerd";
@@ -156,7 +156,6 @@ function bepaalHoogstePassagiernummer()
 function registreren($vluchtnummer, $passagiernummer, $wachtwoord, $naam, $gender = 'x')
 {
     $db = maakVerbinding();
-    $wachtwoordHash = password_hash($wachtwoord, PASSWORD_DEFAULT);
 
     echo $vluchtnummer, $passagiernummer, $wachtwoord, $naam, $gender;
     try 
@@ -167,7 +166,7 @@ function registreren($vluchtnummer, $passagiernummer, $wachtwoord, $naam, $gende
         $stmt->execute([
             'vluchtnummer' => $vluchtnummer,
             'passagiernummer' => $passagiernummer, 
-            'wachtwoord' => $wachtwoordHash,
+            'wachtwoord' => $wachtwoord,
             'naam' => $naam,
             'geslacht' => $gender,
         ]);
