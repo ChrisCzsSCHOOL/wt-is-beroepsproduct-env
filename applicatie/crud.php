@@ -22,7 +22,7 @@ function krijgTabel($tabel, $extraWhere = '', $limit = null, $extraConditie = ''
         $sql .= " " . $extraConditie . " FROM $tabel WHERE 1=1";
     }
 
-    if (!empty($extraWhere)) 
+    if (!empty($extraWhere) || $extraWhere !== '') 
     { // voor een eventuele extra WHERE conditie
         $sql .= " AND $extraWhere";
     }
@@ -138,6 +138,38 @@ function isMedewerker($balienummer)
     }
     catch (Exception $e)
     {
+        return false;
+    }
+}
+
+function bepaalHoogstePassagiernummer()
+{
+    $db = maakVerbinding();
+    $sql = krijgTabel("Passagier", '', null, "MAX(passagiernummer) AS hoogstePassagiernummer");
+
+    // print_r($sql);
+    return $sql[0]['hoogstePassagiernummer'] + 1;
+}
+
+function registreren($passagiernummer, $wachtwoord, $naam, $gender)
+{
+    $db = maakVerbinding();
+    $wachtwoordHash = password_hash($wachtwoord, PASSWORD_DEFAULT);
+    try 
+    {
+        $sql = "INSERT INTO Passagier (passagiernummer, wachtwoord, naam, geslacht) VALUES (:passagiernummer, :wachtwoord, :naam, :geslacht)";
+
+        $stmt = $db->prepare($sql);
+        $stmt->bindParam(':passagiernummer', $passagiernummer);
+        $stmt->bindParam(':wachtwoord', $wachtwoordHash);
+        $stmt->bindParam(':naam', $naam);
+        $stmt->bindParam(':geslacht', $gender);
+        $stmt->execute();
+
+    }
+    catch (Exception $e)
+    {
+        echo $e;
         return false;
     }
 }

@@ -7,7 +7,7 @@ include_once("functies.php");
 <?=maakHeader();?>
 
 <main>
-    
+    <?=maakIncheckFormulier();?>
 </main>
 
 <?=maakFooter();?>
