@@ -153,11 +153,22 @@ function bepaalHoogstePassagiernummer()
     return $hoogsteNummer;
 }
 
+function bepaalHoogsteVluchtnummer()
+{
+    $db = maakVerbinding();
+    $sql = krijgTabel("Vlucht", '', null, "MAX(vluchtnummer) AS hoogsteVluchtnummer");
+
+    // print_r($sql);
+    // echo $sql[0]['hoogsteVluchtnummer'] + 1;
+    $hoogsteNummer = $sql[0]['hoogsteVluchtnummer'] + 1;
+    return $hoogsteNummer;
+}
+
 function registreren($vluchtnummer, $passagiernummer, $wachtwoord, $naam, $gender = 'x')
 {
     $db = maakVerbinding();
 
-    echo $vluchtnummer, $passagiernummer, $wachtwoord, $naam, $gender;
+    // echo $vluchtnummer, $passagiernummer, $wachtwoord, $naam, $gender;
     try 
     {
         $sql = "INSERT INTO Passagier (vluchtnummer, passagiernummer, wachtwoord, naam, geslacht) VALUES (:vluchtnummer, :passagiernummer, :wachtwoord, :naam, :geslacht)";
@@ -176,6 +187,36 @@ function registreren($vluchtnummer, $passagiernummer, $wachtwoord, $naam, $gende
     catch (Exception $e)
     {
         echo $e->getMessage();
+        return false;
+    }
+}
+
+function aanmakenVlucht($vluchtnummer, $bestemming, $max_aantal, $max_gewicht_pp, $max_totaalgewicht, $maatschappijcode, $vertrektijd = null, $gatecode = null)
+{
+    $db = maakVerbinding();
+
+    try
+    {
+        $sql = "INSERT INTO Vlucht (vluchtnummer, bestemming, gatecode, max_aantal, max_gewicht_pp, max_totaalgewicht, vertrektijd, maatschappijcode)
+                VALUES (:vluchtnummer, :bestemming, :gatecode, :max_aantal, :max_gewicht_pp, :max_totaalgewicht, :vertrektijd, :maatschappijcode)";
+
+        $stmt = $db->prepare($sql);
+        $stmt->execute([
+            'vluchtnummer' => $vluchtnummer,
+            'bestemming' => $bestemming,
+            'gatecode' => $gatecode,
+            'max_aantal' => $max_aantal,
+            'max_gewicht_pp' => $max_gewicht_pp,
+            'max_totaalgewicht' => $max_totaalgewicht,
+            'vertrektijd' => $vertrektijd,
+            'maatschappijcode' => $maatschappijcode,
+        ]);
+
+        return true;
+    }
+    catch (Exception $e)
+    {
+        echo 'Error: ' . $e->getMessage();
         return false;
     }
 }

@@ -73,7 +73,7 @@ function maakPassagierToevoegen()
 
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["toevoegen"])) 
     {
-        echo 'request is get';
+        // echo 'request is get';
 
         $vluchtnummer = is_numeric($_POST['vluchtnummer']) ? htmlspecialchars($_POST["vluchtnummer"]) : 0;
         $naam = htmlspecialchars($_POST['naam']);
@@ -98,14 +98,14 @@ function maakPassagierToevoegen()
         $toevoegenGelukt = registreren($vluchtnummer, $passagiernummer, $wachtwoord, $naam); 
         if ($toevoegenGelukt) 
         {
-            echo 'toevoegenGelukt';
+            // echo 'toevoegenGelukt';
             $url = 'medewerkeroverzicht.php';
             header("Location: $url");
             exit();
         } 
         else 
         {
-            echo 'Registratie mislukt, probeer opnieuw.';
+            $html .= '<h2>Registratie mislukt, probeer opnieuw.</h2>';
         }
     }
 
@@ -158,6 +158,126 @@ function isUniekPassagiernummer($passagiernummer) {
     $stmt = $db->prepare($sql);
     $stmt->execute([':passagiernummer' => $passagiernummer]);
     return $stmt->fetchColumn() == 0;
+}
+
+function maakVluchtToevoegen()
+{
+    $html = '';
+
+    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["toevoegen"]))
+    {
+        $bestemming = htmlspecialchars($_POST["vluchthaven"]);
+        $max_aantal = is_numeric($_POST['max_aantal']) ? $_POST['max_aantal'] : null;
+        $max_gewicht_pp = is_numeric($_POST['max_gewicht_pp']) ? $_POST['max_gewicht_pp'] : null;
+        $max_totaalgewicht = is_numeric($_POST['max_totaalgewicht']) ? $_POST['max_totaalgewicht'] : null;
+        $maatschappijcode = htmlspecialchars($_POST['maatschappijcode']);
+
+        do 
+        {
+            $vluchtnummer = bepaalHoogsteVluchtnummer();
+        } while (!isUniekVluchtnummer($vluchtnummer));
+
+        echo $vluchtnummer;
+
+        $_SESSION['bestemming'] = $bestemming;
+        $_SESSION['max_aantal'] = $max_aantal;
+        $_SESSION['max_gewicht_pp'] = $max_gewicht_pp;
+        $_SESSION['max_totaalgewicht'] = $max_totaalgewicht;
+        $_SESSION['maatschappijcode'] = $maatschappijcode;
+
+        // Debugging statements
+        var_dump($vluchtnummer, $bestemming, $max_aantal, $max_gewicht_pp, $max_totaalgewicht, $maatschappijcode);
+
+        $toevoegenGelukt = aanmakenVlucht($vluchtnummer, $bestemming, $max_aantal, $max_gewicht_pp, $max_totaalgewicht, $maatschappijcode, null, null);
+        if ($toevoegenGelukt)
+        {
+            echo 'toevoegengelukt if statement';
+            $url = 'medewerkeroverzicht.php';
+            header("Location: $url");
+            exit();
+        }
+        else 
+        {
+            echo 'toevoegengelukt else statement';
+            $html .= '<h2>Vlucht toevoegen mislukt. Probeer opnieuw.</h2>';
+        }
+    }
+
+    $html .= '
+        <h2>Maak vlucht aan</h2>
+        <div class="gridform">
+            <form method="post" action="">
+                <div class="formitem">
+                    <label for="vluchthaven">Vluchthaven</label>
+                    <select name="vluchthaven" id="vluchthaven">
+                        <option value="">Maak een keuze</option>
+                        '. maakAlleVluchtcodes() .'
+                    </select>
+                </div>
+                <div class="formitem">
+                    <label for="vluchthaven">Maatschappijcode</label>
+                    <select name="maatschappijcode" id="maatschappijcode">
+                        <option value="">Maak een keuze</option>
+                        '. maakAlleMaatschappijcodes() .'
+                    </select>
+                </div>
+                <div class="formitem">
+                    <label for="duur">Maximaal aantal personen</label>
+                    <input 
+                    required 
+                    type="number" 
+                    name="max_aantal" 
+                    id="max_aantal"
+                    placeholder="aantal personen"
+                    />
+                </div>
+                <div class="formitem">
+                    <label for="duur">Maximaal gewicht per persoon</label>
+                    <input 
+                    required 
+                    type="number" 
+                    name="max_gewicht_pp" 
+                    id="max_gewicht_pp"
+                    placeholder="gewicht in kg"
+                    />
+                </div>
+                <div class="formitem">
+                    <label for="duur">Maximaal totaalgewicht</label>
+                    <input 
+                    required 
+                    type="number" 
+                    name="max_totaalgewicht" 
+                    id="max_totaalgewicht"
+                    placeholder="gewicht in kg"
+                    />
+                </div>
+                <input type="submit" name="toevoegen" value="Maak nieuwe vlucht aan!" />
+            </form>
+        </div>
+    ';
+
+    return $html;
+}
+
+function isUniekVluchtnummer($vluchtnummer) {
+    $db = maakVerbinding();
+    $sql = "SELECT COUNT(*) FROM Vlucht WHERE vluchtnummer = :vluchtnummer";
+    $stmt = $db->prepare($sql);
+    $stmt->execute([':vluchtnummer' => $vluchtnummer]);
+    return $stmt->fetchColumn() == 0;
+}
+
+function maakAlleMaatschappijcodes()
+{
+    $query = krijgTabel("Maatschappij");
+    $html = '';
+
+    foreach ($query as $rij) 
+    {
+        $html .= '<option value="'. htmlspecialchars($rij['maatschappijcode']) .'">'. htmlspecialchars($rij['maatschappijcode']) .'</option>';
+    }
+
+    return $html;
 }
 
 ?>
