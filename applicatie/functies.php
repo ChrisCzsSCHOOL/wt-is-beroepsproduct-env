@@ -63,40 +63,6 @@ function maakFooter()
     return $html;
 }
 
-function vluchtSortering($vluchtnummer, $vluchthaven)
-{
-    if ($vluchtnummer !== '' && is_numeric($vluchtnummer)) // kijkt of vluchtnummer een nummer is en niet leeg 
-    {
-        if ($vluchthaven !== '')
-        {
-            $extraWhere = "vluchtnummer = '" . $vluchtnummer . "' AND bestemming = '". $vluchthaven ."' AND vertrektijd > GETDATE()"; 
-            $query = krijgTabel("Vlucht", $extraWhere);
-        }
-        else 
-        {
-            $extraWhere = "vluchtnummer = '" . $vluchtnummer . "' AND vertrektijd > GETDATE()"; 
-            $query = krijgTabel("Vlucht", $extraWhere);    
-        }
-    } 
-    else 
-    {
-        if ($vluchthaven !== '')
-        {
-            $extraWhere = "bestemming = '". $vluchthaven ."' AND vertrektijd > GETDATE()"; 
-            // echo $extraWhere;
-            $query = krijgTabel("Vlucht", $extraWhere);
-            // print_r($query);
-            
-        }
-        else 
-        {
-            $extraWhere = "vertrektijd > GETDATE()";
-            $query = krijgTabel("Vlucht", $extraWhere);
-        }
-    }
-    return $query;
-}
-
 // ----------------------------- einde algemene functies------------------------- 
 
 
@@ -154,190 +120,14 @@ function maakIndexMenu()
 
 // ----------------------------- begin allevluchten.php ----------------------------- 
 
-function maakAlleVluchten()
-{
-    $vluchtnummer = isset($_GET['vluchtnummer']) ? htmlspecialchars($_GET['vluchtnummer']) : ''; // vluchtnummer sanitizen
-    $vluchthaven = isset($_GET['vluchthaven']) ? htmlspecialchars($_GET['vluchthaven']) : ''; // vluchthaven sanitizen
-    // echo $vluchthaven;
-
-    $query = vluchtSortering($vluchtnummer, $vluchthaven);
-
-    $html = '<div>';
-    $html .= '<table>';
-    $html .= '<tr>';
-    $html .= '<th>Vluchtnummer</th>';
-    $html .= '<th>Bestemming</th>';
-    $html .= '<th>Vertrektijd</th>';
-    $html .= '<th>Gatecode</th>';
-    if (isMedewerker($_SESSION['gebruikersnaam']))
-    {
-        $html .= '<th>Max aantal</th>';
-        $html .= '<th>Max gewicht pp</th>';
-        $html .= '<th>Max totaalgewicht</th>';
-    }
-    $html .= '</tr>';
-
-    foreach ($query as $rij)
-    {
-        $html .= '<tr>';
-        $html .= '<td>'. $rij['vluchtnummer'] .'</td>';
-        $html .= '<td>'. $rij['bestemming'] .'</td>';
-        $html .= '<td>'. formatDate($rij['vertrektijd']).' '. formatTime($rij['vertrektijd']) .'</td>';
-        $html .= '<td>Gate '. $rij['gatecode'] .'</td>'; 
-        if (isMedewerker($_SESSION['gebruikersnaam']))
-        {
-            $html .= '<td>'.$rij['max_aantal'].'</td>';
-            $html .= '<td>'.$rij['max_gewicht_pp'].'</td>';
-            $html .= '<td>'.$rij['max_totaalgewicht'].'</td>';
-        }
-        $html .= '</tr>';
-    }
-
-    $html .= '</table>';
-    $html .= '</div>';
-
-    return $html;
-}
-
-function maakAlleVluchtenMenu()
-{
-    $html = "";
-    $html.= '
-        <h2>Alle vluchten:</h2>
-        <h3>Sorteren op:</h3>
-
-        <form method="get" action="">
-            <div class="grid">
-                <div class="formitem">
-                    <label for="vluchtnummer">Vluchtnummer</label>
-                    <input type="text" name="vluchtnummer" id="vluchtnummer">
-                </div>
-            </div>
-            <div class="grid">
-                <div class="formitem">
-                    <label for="vluchthaven">Vluchthaven</label>
-                    <select name="vluchthaven" id="vluchthaven">
-                        <option value="">Maak een keuze</option>
-                        '. maakAlleVluchtcodes() .'
-                    </select>
-                </div>
-            </div>
-            <div class="grid">
-                <div class="formitem">
-                    <button type="submit">Submit</button>
-                </div>
-            </div>
-        </form>
-    ';
-    return $html;
-}
-
-function maakAlleVluchtcodes()
-{
-    $query = krijgTabel("Luchthaven");
-    $html = '';
-
-    foreach ($query as $rij) 
-    {
-        $html .= '<option value="'. htmlspecialchars($rij['luchthavencode']) .'">'. htmlspecialchars($rij['luchthavencode']) .'</option>';
-    }
-
-    return $html;
-}
+include_once("functies/functies_vluchten.php");
 
 // ----------------------------- einde allevluchten.php ----------------------------- 
 
 
 // ----------------------------- begin inlogpagina.php ----------------------------- 
 
-function maakInlogpagina()
-{
-    $html = '';
-
-    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["inloggen"]))
-    {
-        if (is_numeric($_POST["username"])){ $passagiernummer = htmlspecialchars($_POST["username"]); } else { $passagiernummer = 0; }
-        $wachtwoord = htmlspecialchars($_POST["password"]);
-        $wachtwoordHash = password_hash($wachtwoord, PASSWORD_DEFAULT);
-        $html .= valideerLogin($passagiernummer, $wachtwoord);
-    }
-
-    $html .= '
-            <div class="gridform">
-                <form method="post" action="">
-                    <div class="formitem">
-                        <label for="username">Passagiersnummer</label>
-                        <input 
-                        required
-                        pattern="[0-9]+"
-                        title="Passagiersnummer mag alleen bestaan uit nummers"
-                        type="text" 
-                        name="username" 
-                        id="username"
-                        />
-                    </div>
-                    
-                    <div class="formitem">
-                        <label for="password">Wachtwoord</label>
-                        <input required 
-                        type="password" 
-                        name="password" 
-                        id="password"
-                        />
-                    </div>
-                    <button type="sumbit" name="inloggen">Log in</button>
-                <p>Nog geen account? <a id="zwartelink" href="registratieformulier.php">Klik dan hier!</a></p>
-                </form>
-            </div>';
-
-
-    return $html;
-}
-
-function valideerLogin($gebruikersnaam, $wachtwoord)
-{
-    $valideer = inloggen($gebruikersnaam, $wachtwoord);
-    if ($valideer)
-    {
-        ob_end_clean();
-        $_SESSION['gebruikersnaam'] = $gebruikersnaam;
-        $_SESSION['loggedIn'] = true; 
-        return loginMelding("Goed");
-    }
-    else 
-    {
-        return loginMelding("Fout");
-    }
-}
-
-function loginMelding($goedOfFout)
-{
-    if ($goedOfFout == "Goed")
-    {
-        if (isMedewerker($_SESSION['gebruikersnaam'])) 
-        { // als de gebruikersnaam waarmee ingelogd is een werknemer is, dan moet deze doorgestuurd worden naar het medewerkeroverzicht
-            $url = "allevluchten.php";
-            header("Location: $url");
-            exit();
-        }
-        else 
-        {
-            $url = " mijnvluchten.html";
-            header("Location: $url");
-            exit();
-        }
-    }
-    elseif ($goedOfFout == "Fout")
-    {
-        $html = '<h2>Ingevulde gegevens zijn fout</h2>';
-        return $html;
-    }
-    elseif ($goedOfFout == "NummerFout")
-    {
-        $html = '<h2>Passagiersnummer moet een nummer zijn</h2>';
-        return $html;
-    }
-}
+include_once("functies/functies_inloggen.php");
 
 // ----------------------------- einde inlogpagina.php ----------------------------- 
 
@@ -464,7 +254,7 @@ function maakRegistratieformulier()
         $wachtwoord = htmlspecialchars($_POST["password"]);
         $naam = htmlspecialchars($_POST['lastname']);
         $gender = htmlspecialchars($_POST['gender']);
-        $html .= valideerRegistratie($passagiersnummer, $wachtwoord, $naam, $gender);
+        $html .= registreren($passagiersnummer, $wachtwoord, $naam, $gender);
 
     }
 
@@ -522,17 +312,12 @@ function maakRegistratieformulier()
     return $html;
 }
 
-function valideerRegistratie($passagiernummer, $wachtwoord, $naam, $gender)
+function valideerRegistratie($vluchtnummer, $passagiernummer, $wachtwoord, $naam, $gender = 'x')
 {
-    if (registreren($passagiernummer, $wachtwoord, $naam, $gender))
+    if (registreren($vluchtnummer, $passagiernummer, $wachtwoord, $naam, $gender))
     {
         // correcte registratie
         // doorsturen goede pagina
-        echo 'goede registratie';
-        echo $passagiernummer; 
-        echo $wachtwoord;
-        echo $naam;
-        echo $gender;
     }
     else
     {
@@ -544,52 +329,165 @@ function valideerRegistratie($passagiernummer, $wachtwoord, $naam, $gender)
 
 // --------------------------- einde registratieformulier.php ----------------------
 
-
-// --------------------------- begin mijnvluchten.php ------------------------------
-
-function maakEigenVluchten()
+function maakMedewerkerPagina()
 {
-    echo $_SESSION['gebruikersnaam'];
+    if (isMedewerker($_SESSION['gebruikersnaam']))
+    {
+        $html = '';
+        $html .= '
+            <div class="grid">
+                <div class="blokje">
+                <a href="incheckpagina.php">
+                <h4>Inchecken passagier</h4>
+                    <img 
+                    src="images/pngtree-airplane-destination-arrived-aeroplane-aircraft-picture-image_8175298.png" 
+                    alt="Inchecken vliegtuig"
+                    width="200"
+                    height="200"
+                    />
+                </a>
+                </div>
 
-    $db = maakVerbinding();
-    $sql = "select P.vluchtnummer, P.passagiernummer, V.bestemming, V.vertrektijd, P.stoel 
-             from Passagier P LEFT JOIN Vlucht V ON V.vluchtnummer = P.vluchtnummer
-             
-             WHERE passagiernummer = '". $_SESSION['gebruikersnaam']. "'";
-//";
-
-    $query = $db->prepare($sql);
-    $query->execute();
-    $queryArray = $query->setFetchMode(PDO::FETCH_ASSOC);
-    
-    $html = '';
-    $html .= '<h2>Mijn vluchten</h2>';
-    $html .= '<div><table><tr>';
-    $html .= '<th>Vluchtnummer</th>';
-    $html .= '<th>Passagiernummer</th>';
-    $html .= '<th>Bestemming</th>';
-    $html .= '<th>Vertrektijd</th>';
-    $html .= '<th>Stoelnummer</th>';
-    $html .= '</tr>';
-    
-    foreach($query as $rij)
-    {   
-        $html .= '<tr>';
-        $html .= '<td>'.$rij['vluchtnummer'].'</td>';
-        $html .= '<td>'.$rij['passagiernummer'].'</td>';
-        $html .= '<td>'.$rij['bestemming'].'</td>';
-        $html .= '<td>'. formatDate($rij['vertrektijd']).' '. formatTime($rij['vertrektijd']).'</td>';
-        $html .= '<td>'.$rij['stoel'].'</td>';
-        $html .= '</tr>';
+                <div class="blokje">
+                    <a href="allevluchten.php">
+                        <h4>Vluchtoverzicht</h4>
+                        <img 
+                        src="images/pngtree-flight-line-icon-png-image_9022398.png" 
+                        alt="Vluchtenoverzicht"
+                        width="200"
+                        height="200"
+                        />
+                    </a>
+                </div>
+            
+                <div class="blokje">
+                    <a href="vluchttoevoegen.php">
+                        <h4>Vlucht toevoegen</h4>
+                        <img 
+                        src="images/USP_boekjeeigenticket-01-244x300.png" 
+                        alt="Vlucht toevoegen"
+                        width="200"
+                        height="200"
+                        />
+                    </a>
+                </div>
+            
+            <div class="blokje">
+                <a href="passagiertoevoegen.php">
+                <h4>Passagier toevoegen</h4>
+                    <img 
+                    src="images/images.png" 
+                    alt="passagier toevoegen"
+                    width="200"
+                    height="200"
+                    />
+                </a>
+                </div>
+            </div>
+        ';
     }
-
-    $html .= '</table>';
-    $html .= '</div>';
-
+    else 
+    {
+        $url = 'index.php';
+        header("Location: $url");
+        exit();
+    }
+    
     return $html;
-
 }
 
-// --------------------------- einde mijnvluchten.php ------------------------------
+function maakPassagierToevoegen() 
+{
+    $html = '';
+
+    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["toevoegen"])) 
+    {
+        echo 'request is get';
+
+        $vluchtnummer = is_numeric($_POST['vluchtnummer']) ? htmlspecialchars($_POST["vluchtnummer"]) : 0;
+        $naam = htmlspecialchars($_POST['naam']);
+        $wachtwoord = htmlspecialchars($_POST['password']); // Sanitize password input
+
+        // Generate a unique passagiernummer
+        do {
+            $passagiernummer = bepaalHoogstePassagiernummer();
+        } while (!isUniekPassagiernummer($passagiernummer));
+
+        // Set session variables
+        $_SESSION['passagiernummer'] = $passagiernummer;
+        $_SESSION['vluchtnummer'] = $vluchtnummer;
+        $_SESSION['naam'] = $naam;
+        $_SESSION['wachtwoord'] = $wachtwoord;
+
+        // Debug output
+        echo $_SESSION['passagiernummer'], $_SESSION['vluchtnummer'], $_SESSION['naam'], $_SESSION['wachtwoord'];
+
+        // Call the register function and check if it was successful
+        $toevoegenGelukt = registreren($vluchtnummer, $passagiernummer, $wachtwoord, $naam); 
+        if ($toevoegenGelukt) 
+        {
+            echo 'toevoegenGelukt';
+            $url = 'medewerkeroverzicht.php';
+            header("Location: $url");
+            exit();
+        } 
+        else 
+        {
+            echo 'Registratie mislukt, probeer opnieuw.';
+        }
+    }
+
+    $html .= '
+        <h2>Maak nieuwe passagier aan:</h2>
+
+            <div class="gridform">
+            <form method="POST" action="">
+                <div class="formitem">
+                    <label for="vluchtnummer">Vluchtnummer: (KLMGELR...)</label>
+                    <input required 
+                    type="text" 
+                    name="vluchtnummer" 
+                    id="vluchtnummer" 
+                    pattern="[0-9]+"
+                    title="Vluchtnummer bestaat uit 6 cijfers" 
+                    placeholder="Vluchtnummer"
+                    />
+                </div>
+
+                <div class="formitem">
+                    <label for="firstname">Naam</label>
+                    <input required 
+                    type="text" 
+                    name="naam" 
+                    id="naam"
+                    placeholder="Naam"
+                    />
+                </div>
+
+                <div class="formitem">
+                    <label for="password">Wachtwoord</label>
+                    <input required 
+                    type="password" 
+                    name="password" 
+                    id="password"
+                    />
+                </div>
+                <button type="submit" name="toevoegen">Meld passagier aan</button>
+            </form>
+        </div>
+    ';
+
+    return $html;
+}
+
+function isUniekPassagiernummer($passagiernummer) {
+    $db = maakVerbinding();
+    $sql = "SELECT COUNT(*) FROM Passagier WHERE passagiernummer = :passagiernummer";
+    $stmt = $db->prepare($sql);
+    $stmt->execute([':passagiernummer' => $passagiernummer]);
+    return $stmt->fetchColumn() == 0;
+}
+
+
 
 ?>

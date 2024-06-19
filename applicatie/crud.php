@@ -148,28 +148,35 @@ function bepaalHoogstePassagiernummer()
     $sql = krijgTabel("Passagier", '', null, "MAX(passagiernummer) AS hoogstePassagiernummer");
 
     // print_r($sql);
-    return $sql[0]['hoogstePassagiernummer'] + 1;
+    // echo $sql[0]['hoogstePassagiernummer'] + 1;
+    $hoogsteNummer = $sql[0]['hoogstePassagiernummer'] + 1;
+    return $hoogsteNummer;
 }
 
-function registreren($passagiernummer, $wachtwoord, $naam, $gender)
+function registreren($vluchtnummer, $passagiernummer, $wachtwoord, $naam, $gender = 'x')
 {
     $db = maakVerbinding();
     $wachtwoordHash = password_hash($wachtwoord, PASSWORD_DEFAULT);
+
+    echo $vluchtnummer, $passagiernummer, $wachtwoord, $naam, $gender;
     try 
     {
-        $sql = "INSERT INTO Passagier (passagiernummer, wachtwoord, naam, geslacht) VALUES (:passagiernummer, :wachtwoord, :naam, :geslacht)";
+        $sql = "INSERT INTO Passagier (vluchtnummer, passagiernummer, wachtwoord, naam, geslacht) VALUES (:vluchtnummer, :passagiernummer, :wachtwoord, :naam, :geslacht)";
 
-        $stmt = $db->prepare($sql);
-        $stmt->bindParam(':passagiernummer', $passagiernummer);
-        $stmt->bindParam(':wachtwoord', $wachtwoordHash);
-        $stmt->bindParam(':naam', $naam);
-        $stmt->bindParam(':geslacht', $gender);
-        $stmt->execute();
+        $stmt = $db->prepare($sql); 
+        $stmt->execute([
+            'vluchtnummer' => $vluchtnummer,
+            'passagiernummer' => $passagiernummer, 
+            'wachtwoord' => $wachtwoordHash,
+            'naam' => $naam,
+            'geslacht' => $gender,
+        ]);
 
+        return true;
     }
     catch (Exception $e)
     {
-        echo $e;
+        echo $e->getMessage();
         return false;
     }
 }
