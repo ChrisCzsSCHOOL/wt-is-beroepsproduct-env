@@ -33,7 +33,7 @@ function maakHeader()
                         <div class="menuitem"><a href="index.php">Startpagina</a></div>
                         <div class="menuitem"><a href="incheckpagina.php">Inchecken</a></div>
                         <div class="menuitem"><a href="vluchtenoverzicht.php">Vluchtenoverzicht</a></div>
-                        <div class="menuitem"><a href="medewerkerinlogpagina.php">Medewerker</a></div>
+                        <div class="menuitem"><a href="inlogpagina.php">Medewerker</a></div>
                     </div>
     ';
 
@@ -107,7 +107,7 @@ function maakIndexMenu()
 
         <div class="grid">
             <div class="blokje">
-                <a href="medewerkerinlogpagina.php">
+                <a href="inlogpagina.php">
                 <h4>Medewerker</h4>
                     <img 
                     src="images/Logo-Transparency-1-1.png" 
@@ -301,9 +301,18 @@ function loginMelding($goedOfFout)
 {
     if ($goedOfFout == "Goed")
     {
-        $url = " mijnvluchten.html";
-        header("Location: $url");
-        exit();
+        if (isMedewerker($_SESSION['gebruikersnaam'])) 
+        { // als de gebruikersnaam waarmee ingelogd is een werknemer is, dan moet deze doorgestuurd worden naar het medewerkeroverzicht
+            $url = "medewerkeroverzicht.php";
+            header("Location: $url");
+            exit();
+        }
+        else 
+        {
+            $url = " mijnvluchten.html";
+            header("Location: $url");
+            exit();
+        }
     }
     elseif ($goedOfFout == "Fout")
     {

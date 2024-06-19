@@ -37,7 +37,7 @@ function krijgTabel($tabel, $extraWhere = '', $limit = null, $extraConditie = ''
     }
     $query->execute();
 
-    return $query->fetchAll(PDO::FETCH_ASSOC);
+    return $query->fetchAll(PDO::FETCH_ASSOC); // retourneert de hele array.
 }
 
 function formatTime($time)
@@ -66,13 +66,13 @@ function inloggen($passagiernummer, $wachtwoord)
 
     if ($gebruiker) // kijkt of gebruiker bestaat.
     {
-        echo "gebruiker if statement";
-        echo $gebruiker['wachtwoord'];
-        echo $wachtwoord;
+        // echo "gebruiker if statement";
+        // echo $gebruiker['wachtwoord'];
+        // echo $wachtwoord;
         if ($wachtwoord == $gebruiker['wachtwoord'])
         {
             $check = true;
-            echo "Passagier geverifieerd";
+            // echo "Passagier geverifieerd";
         }
         else 
         {
@@ -82,9 +82,64 @@ function inloggen($passagiernummer, $wachtwoord)
     else 
     {
         $check = false;
+        $medewerkerSql = "SELECT * FROM Balie WHERE balienummer = :balienummer";
+
+        $stmt = $db->prepare($medewerkerSql);
+        $stmt->bindParam(':balienummer', $passagiernummer);
+        $stmt->execute();
+        $medewerker = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($medewerker) // kijkt of medewerker bestaat.
+        {
+            // echo "medewerker if statement";
+            // echo $medewerker['wachtwoord'];
+            // echo $wachtwoord;
+            if ($wachtwoord == $medewerker['wachtwoord'])
+            {
+                $check = true;
+                // echo "Medewerker geverifieerd";
+            }
+            else 
+            {
+                $check = false;
+            }
+        }
+        else 
+        {
+            $check = false;	
+        }
+
+        return $check;
     }
 
     return $check;
+}
+
+function isMedewerker($balienummer)
+{
+    try 
+    {
+        $db = maakVerbinding();
+        $sql = "SELECT * FROM Balie WHERE balienummer = :balienummer";
+
+        $stmt = $db->prepare($sql);
+        $stmt->bindParam(':balienummer', $balienummer);
+        $stmt->execute();
+        $medewerker = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($medewerker)
+        {
+            return true;
+        }
+        else 
+        {
+            return false;
+        }
+    }
+    catch (Exception $e)
+    {
+        return false;
+    }
 }
 
 ?>
