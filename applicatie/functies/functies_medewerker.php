@@ -2,80 +2,83 @@
 
 function maakMedewerkerPagina()
 {
-    if (isMedewerker($_SESSION['gebruikersnaam']))
-    {
-        $html = '';
-        $html .= '
-            <div class="grid">
-                <div class="blokje">
-                <a href="incheckpagina.php">
-                <h4>Inchecken passagier</h4>
-                    <img 
-                    src="images/pngtree-airplane-destination-arrived-aeroplane-aircraft-picture-image_8175298.png" 
-                    alt="Inchecken vliegtuig"
-                    width="200"
-                    height="200"
-                    />
-                </a>
-                </div>
-
-                <div class="blokje">
-                    <a href="allevluchten.php">
-                        <h4>Vluchtoverzicht</h4>
+    if (isset($_SESSION['gebruikersnaam']))
+    {    
+        if (isMedewerker($_SESSION['gebruikersnaam']))
+        {
+            $html = '';
+            $html .= '
+                <div class="grid">
+                    <div class="blokje">
+                    <a href="incheckpagina.php">
+                    <h4>Inchecken passagier</h4>
                         <img 
-                        src="images/pngtree-flight-line-icon-png-image_9022398.png" 
-                        alt="Vluchtenoverzicht"
-                        width="200"
-                        height="200"
-                        />
-                    </a>
-                </div>
-            
-                <div class="blokje">
-                    <a href="vluchttoevoegen.php">
-                        <h4>Vlucht toevoegen</h4>
-                        <img 
-                        src="images/USP_boekjeeigenticket-01-244x300.png" 
-                        alt="Vlucht toevoegen"
-                        width="200"
-                        height="200"
-                        />
-                    </a>
-                </div>
-            
-                <div class="blokje">
-                    <a href="passagiertoevoegen.php">
-                    <h4>Passagier toevoegen</h4>
-                        <img 
-                        src="images/images-removebg-preview.png" 
-                        alt="passagier toevoegen"
-                        width="200"
-                        height="200"
-                        />
-                    </a>
-                    </div>
-                
-                
-                <div class="blokje">
-                    <a href="passagierwijzigen.php">
-                    <h4>Passagier wijzigen</h4>
-                        <img 
-                        src="images/pngtree-edit-icon-image_1344389-removebg-preview.png" 
-                        alt="passagier wijzigen"
+                        src="images/pngtree-airplane-destination-arrived-aeroplane-aircraft-picture-image_8175298.png" 
+                        alt="Inchecken vliegtuig"
                         width="200"
                         height="200"
                         />
                     </a>
                     </div>
 
-            </div>
-        ';
-    }
-    else 
-    {
-        $url = 'index.php';
-        header("Location: $url");
-        exit();
+                    <div class="blokje">
+                        <a href="allevluchten.php">
+                            <h4>Vluchtoverzicht</h4>
+                            <img 
+                            src="images/pngtree-flight-line-icon-png-image_9022398.png" 
+                            alt="Vluchtenoverzicht"
+                            width="200"
+                            height="200"
+                            />
+                        </a>
+                    </div>
+                
+                    <div class="blokje">
+                        <a href="vluchttoevoegen.php">
+                            <h4>Vlucht toevoegen</h4>
+                            <img 
+                            src="images/USP_boekjeeigenticket-01-244x300.png" 
+                            alt="Vlucht toevoegen"
+                            width="200"
+                            height="200"
+                            />
+                        </a>
+                    </div>
+                
+                    <div class="blokje">
+                        <a href="passagiertoevoegen.php">
+                        <h4>Passagier toevoegen</h4>
+                            <img 
+                            src="images/images-removebg-preview.png" 
+                            alt="passagier toevoegen"
+                            width="200"
+                            height="200"
+                            />
+                        </a>
+                        </div>
+                    
+                    
+                    <div class="blokje">
+                        <a href="passagierwijzigen.php">
+                        <h4>Passagier wijzigen</h4>
+                            <img 
+                            src="images/pngtree-edit-icon-image_1344389-removebg-preview.png" 
+                            alt="passagier wijzigen"
+                            width="200"
+                            height="200"
+                            />
+                        </a>
+                        </div>
+
+                </div>
+            ';
+        }
+        else 
+        {
+            $url = 'index.php';
+            header("Location: $url");
+            exit();
+        }
     }
     
     return $html;
@@ -87,49 +90,16 @@ function maakPassagierToevoegen()
 
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["toevoegen"])) 
     {
-        // echo 'request is get';
-
-        $vluchtnummer = is_numeric($_POST['vluchtnummer']) ? htmlspecialchars($_POST["vluchtnummer"]) : 0;
-        $naam = htmlspecialchars($_POST['naam']);
-        $wachtwoord = htmlspecialchars($_POST['password']); 
-        $wachtwoordHash = password_hash($wachtwoord, PASSWORD_DEFAULT);
-
-        // Zorgt ervoor dat er een uniek passagiersnummer komt
-        do {
-            $passagiernummer = bepaalHoogstePassagiernummer();
-        } while (!isUniekPassagiernummer($passagiernummer));
-
-        // Set session variables
-        $_SESSION['passagiernummer'] = $passagiernummer;
-        $_SESSION['vluchtnummer'] = $vluchtnummer;
-        $_SESSION['naam'] = $naam;
-        $_SESSION['wachtwoord'] = $wachtwoordHash;
-
-        // Debug output
-        echo $_SESSION['passagiernummer'], $_SESSION['vluchtnummer'], $_SESSION['naam'], $_SESSION['wachtwoord'];
-
-        // Call the register function and check if it was successful
-        $toevoegenGelukt = registreren($vluchtnummer, $passagiernummer, $wachtwoord, $naam); 
-        if ($toevoegenGelukt) 
-        {
-            // echo 'toevoegenGelukt';
-            $url = 'medewerkeroverzicht.php';
-            header("Location: $url");
-            exit();
-        } 
-        else 
-        {
-            $html .= '<h2>Registratie mislukt, probeer opnieuw.</h2>';
-        }
+        regelRegistratieVariabele('medewerker');
     }
 
     $html .= '
         <h2>Maak nieuwe passagier aan:</h2>
 
-            <div class="gridform">
+        <div class="gridform">
             <form method="POST" action="">
                 <div class="formitem">
-                    <label for="vluchtnummer">Vluchtnummer: (KLMGELR...)</label>
+                    <label for="vluchtnummer">Vluchtnummer:</label>
                     <input required 
                     type="text" 
                     name="vluchtnummer" 
@@ -167,6 +137,56 @@ function maakPassagierToevoegen()
     return $html;
 }
 
+function regelRegistratieVariabele($RegOfPas)
+{
+    $html = '';
+
+    $vluchtnummer = is_numeric($_POST['vluchtnummer']) ? htmlspecialchars($_POST["vluchtnummer"]) : 0;
+    $naam = htmlspecialchars($_POST['naam']);
+    $wachtwoord = htmlspecialchars($_POST['password']); 
+    $wachtwoordHash = password_hash($wachtwoord, PASSWORD_DEFAULT);
+
+    $maxAttempts = 5;
+    $attempt = 0;
+    do {
+        $passagiernummer = bepaalHoogstePassagiernummer();
+        $attempt++;
+    } while (!isUniekPassagiernummer($passagiernummer) && $attempt < $maxAttempts);
+
+    if ($attempt == $maxAttempts) {
+        $html .= '<h2>Kon geen uniek passagiernummer genereren, probeer opnieuw.</h2>';
+    } 
+    else 
+    {
+        $_SESSION['passagiernummer'] = $passagiernummer;
+        $_SESSION['vluchtnummer'] = $vluchtnummer;
+        $_SESSION['naam'] = $naam;
+        $_SESSION['wachtwoord'] = $wachtwoordHash;
+
+        $toevoegenGelukt = registreren($vluchtnummer, $passagiernummer, $wachtwoordHash, $naam); 
+
+        if ($toevoegenGelukt) {
+            if($RegOfPas == 'medewerker')
+            {
+                $url = 'medewerkeroverzicht.php';
+                header("Location: $url");
+                exit();
+            }
+            elseif ($RegOfPas == 'registreren')
+            {
+                $url = 'incheckpagina.php';
+                header("Location: $url");
+                exit();
+            }
+        } 
+        else 
+        {
+            $html .= '<h2>Registratie mislukt, probeer opnieuw.</h2>';
+        }
+    }
+    return $html;
+}
+
 function isUniekPassagiernummer($passagiernummer) {
     $db = maakVerbinding();
     $sql = "SELECT COUNT(*) FROM Passagier WHERE passagiernummer = :passagiernummer";
@@ -192,7 +212,7 @@ function maakVluchtToevoegen()
             $vluchtnummer = bepaalHoogsteVluchtnummer();
         } while (!isUniekVluchtnummer($vluchtnummer));
 
-        echo $vluchtnummer;
+        // echo $vluchtnummer;
 
         $_SESSION['bestemming'] = $bestemming;
         $_SESSION['max_aantal'] = $max_aantal;
@@ -200,8 +220,7 @@ function maakVluchtToevoegen()
         $_SESSION['max_totaalgewicht'] = $max_totaalgewicht;
         $_SESSION['maatschappijcode'] = $maatschappijcode;
 
-        // Debugging statements
-        var_dump($vluchtnummer, $bestemming, $max_aantal, $max_gewicht_pp, $max_totaalgewicht, $maatschappijcode);
+        // var_dump($vluchtnummer, $bestemming, $max_aantal, $max_gewicht_pp, $max_totaalgewicht, $maatschappijcode);
 
         $toevoegenGelukt = aanmakenVlucht($vluchtnummer, $bestemming, $max_aantal, $max_gewicht_pp, $max_totaalgewicht, $maatschappijcode, null, null);
         if ($toevoegenGelukt)
@@ -237,7 +256,7 @@ function maakVluchtToevoegen()
                     </select>
                 </div>
                 <div class="formitem">
-                    <label for="duur">Maximaal aantal personen</label>
+                    <label for="max_aantal">Maximaal aantal personen</label>
                     <input 
                     required 
                     type="number" 
@@ -247,7 +266,7 @@ function maakVluchtToevoegen()
                     />
                 </div>
                 <div class="formitem">
-                    <label for="duur">Maximaal gewicht per persoon</label>
+                    <label for="max_gewicht_pp">Maximaal gewicht per persoon</label>
                     <input 
                     required 
                     type="number" 
@@ -257,7 +276,7 @@ function maakVluchtToevoegen()
                     />
                 </div>
                 <div class="formitem">
-                    <label for="duur">Maximaal totaalgewicht</label>
+                    <label for="max_totaalgewicht">Maximaal totaalgewicht</label>
                     <input 
                     required 
                     type="number" 
@@ -292,6 +311,115 @@ function maakAlleMaatschappijcodes()
         $html .= '<option value="'. htmlspecialchars($rij['maatschappijcode']) .'">'. htmlspecialchars($rij['maatschappijcode']) .'</option>';
     }
 
+    return $html;
+}
+
+function maakPassagierWijzingen()
+{
+    $html = '';
+    if (isMedewerker($_SESSION['gebruikersnaam']))
+    {
+        $passagiernummer = 0;
+        if (isset($_GET['passagiernummer']) && is_numeric($_GET['passagiernummer']))
+        {
+            $passagiernummer = htmlspecialchars($_GET['passagiernummer']);
+            $extraWhere = 'passagiernummer = :passagiernummer';
+            $params = array('passagiernummer' => $passagiernummer);
+        
+            $query = krijgTabel("Passagier", $extraWhere, null,'', $params);
+        }
+
+
+        $html .= '
+            <form method="get" action="">
+                    <div class="grid">
+                        <div class="formitem">
+                            <label for="passagiernummer">Passagiernummer</label>
+                            <input 
+                            type="number" 
+                            name="passagiernummer" 
+                            id="passagiernummer"';
+
+                            if (isset($_GET['passagiernummer']) && is_numeric($_GET['passagiernummer']))
+                            {
+                                $html .= ' placeholder="'. htmlspecialchars($_GET['passagiernummer']) .'"';
+                            }
+
+                            $html .= '>
+                        </div>
+                    </div>
+                    <div class="grid">
+                        <div class="formitem">
+                            <button type="submit">Submit</button>
+                        </div>
+                    </div>
+                </form>
+        ';
+        if (isset($query))
+        {
+            foreach ($query as $rij)
+            {
+                if ($_SERVER["REQUEST_METHOD"] == 'POST' && isset($_POST['wijzigen']))
+                { 
+                    if (is_numeric($_POST["vluchtnummer"])) { $vluchtnummer = htmlspecialchars($_POST["vluchtnummer"]); } else { $vluchtnummer = 0; }
+                    $stoel = htmlspecialchars($_POST['stoel']);
+                    $html .= valideerGegevens($passagiernummer, $vluchtnummer, $stoel);
+                }
+
+                $html .= '
+                    <form method="post" action="">
+                        <div class="grid">
+                            <div class="formitem">
+                                <label for="vluchtnummer">Vluchtnummer</label>
+                                <input 
+                                type="number" 
+                                name="vluchtnummer" 
+                                id="vluchtnummer"
+                                placeholder="'. $rij['vluchtnummer'] .'">
+                            </div>
+                        </div>
+                        <div class="grid">
+                            <div class="formitem">
+                                <label for="stoel">Stoel</label>
+                                <input 
+                                type="text" 
+                                name="stoel" 
+                                id="stoel"
+                                placeholder="'. $rij['stoel'] .'">
+                            </div>
+                        </div>
+                        <div class="grid">
+                            <div class="formitem">
+                                <button type="submit" name="wijzigen">Submit</button>
+                            </div>
+                        </div>
+                    </form>
+                ';
+            }
+        }
+    }
+    else 
+    {
+        $url = 'index.php';
+        header("Location: $url");
+        exit();
+    }
+    return $html;
+}
+
+function valideerGegevens($passagiernummer, $vluchtnummer, $stoel)
+{
+    $html = '';
+
+    $valideer = wijzigPassagierGegevens($passagiernummer, $vluchtnummer, $stoel);
+    if ($valideer)
+    {
+        $html .= '<h2>Wijzigen is gelukt!</h2>';
+    }
+    else 
+    {
+        $html .= '<h2>Wijzigen is NIET gelukt!</h2>';
+    }
     return $html;
 }
 

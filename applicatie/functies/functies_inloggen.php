@@ -90,4 +90,61 @@ function loginMelding($goedOfFout)
     }
 }
 
+function maakRegistratieformulier()
+{
+    $html = '';
+
+    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["toevoegen"])) 
+    {
+        regelRegistratieVariabele('registreren');
+    }
+
+    $html .= 
+    '
+    <h2>Aanmelden</h2>
+    <p>Meld je aan om <em>klant</em> te worden!</p>
+    
+    <h3>Bij aanmelding wordt u passagiernummer: '. bepaalHoogstePassagiernummer() .'</h3>
+
+        <div class="gridform">
+            <form method="POST" action="">
+                <div class="formitem">
+                    <label for="vluchtnummer">Vluchtnummer:</label>
+                    <input required 
+                    type="text" 
+                    name="vluchtnummer" 
+                    id="vluchtnummer" 
+                    pattern="[0-9]+"
+                    title="Vluchtnummer bestaat uit 6 cijfers" 
+                    placeholder="Vluchtnummer"
+                    />
+                </div>
+
+                <div class="formitem">
+                    <label for="firstname">Naam</label>
+                    <input required 
+                    type="text" 
+                    name="naam" 
+                    id="naam"
+                    placeholder="Naam"
+                    />
+                </div>
+
+                <div class="formitem">
+                    <label for="password">Wachtwoord</label>
+                    <input required 
+                    type="password" 
+                    name="password" 
+                    id="password"
+                    pattern="^(?=.*[A-Z])(?=.*\d).+$"
+                    />
+                </div>
+                <button type="submit" name="toevoegen">Meld passagier aan</button>
+            </form>
+        </div>
+    ';
+
+    return $html;
+}
+
 ?>

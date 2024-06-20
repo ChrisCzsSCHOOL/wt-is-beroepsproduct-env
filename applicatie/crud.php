@@ -168,27 +168,71 @@ function registreren($vluchtnummer, $passagiernummer, $wachtwoord, $naam, $gende
 {
     $db = maakVerbinding();
 
+    if (!isUniekPassagiernummer($passagiernummer)) {
+        throw new Exception('Duplicate passagiernummer detected. Please close the site and try again.');
+    }
+
     // echo $vluchtnummer, $passagiernummer, $wachtwoord, $naam, $gender;
     try 
     {
-        $sql = "INSERT INTO Passagier (vluchtnummer, passagiernummer, wachtwoord, naam, geslacht) VALUES (:vluchtnummer, :passagiernummer, :wachtwoord, :naam, :geslacht)";
+        if (maxAantalBereikt($vluchtnummer, $passagiernummer))
+        {
+            return false;
+        }
+        else
+        {
+            $sql = "INSERT INTO Passagier (vluchtnummer, passagiernummer, wachtwoord, naam, geslacht) VALUES (:vluchtnummer, :passagiernummer, :wachtwoord, :naam, :geslacht)";
 
-        $stmt = $db->prepare($sql); 
-        $stmt->execute([
-            'vluchtnummer' => $vluchtnummer,
-            'passagiernummer' => $passagiernummer, 
-            'wachtwoord' => $wachtwoord,
-            'naam' => $naam,
-            'geslacht' => $gender,
-        ]);
+            $stmt = $db->prepare($sql); 
+            $stmt->execute([
+                'vluchtnummer' => $vluchtnummer,
+                'passagiernummer' => $passagiernummer, 
+                'wachtwoord' => $wachtwoord,
+                'naam' => $naam,
+                'geslacht' => $gender,
+            ]);
 
-        return true;
+            return true;
+        }
     }
     catch (Exception $e)
     {
-        // echo $e->getMessage();
+        echo $e->getMessage();
         return false;
     }
+}
+
+function maxAantalBereikt($vluchtnummer, $passagiernummer)
+{
+    $extraWhere = "vluchtnummer = :vluchtnummer";
+    $params = array('vluchtnummer' => $vluchtnummer);
+    $queryV = krijgTabel("Vlucht", $extraWhere, 1, '', $params);
+    $queryP = krijgTabel("Passagier", $extraWhere, null, "COUNT(*) AS aantalPassagiers", $params);
+
+    // print_r($queryP);
+    // print_r($queryV);
+
+    $max_aantal = 0;
+    foreach ($queryV as $rij)
+    {
+        $max_aantal = $rij['max_aantal'];
+    }
+
+    
+    // echo $max_aantal;
+    
+    $aantalPassagiers = $queryP[0]['aantalPassagiers'];
+    if ($aantalPassagiers + 1 > $max_aantal)
+    {
+        // Kan niet nog een persoon bij de vlucht toegevoegd worden, want deze is vol.
+        return false;
+    }
+    else
+    {
+        // Er is ruimte voor nog een persoon.
+        return true;
+    }
+
 }
 
 function aanmakenVlucht($vluchtnummer, $bestemming, $max_aantal, $max_gewicht_pp, $max_totaalgewicht, $maatschappijcode, $vertrektijd = null, $gatecode = null)
@@ -217,6 +261,140 @@ function aanmakenVlucht($vluchtnummer, $bestemming, $max_aantal, $max_gewicht_pp
     catch (Exception $e)
     {
         echo 'Error: ' . $e->getMessage();
+        return false;
+    }
+}
+
+function kofferRegistratie($passagiernummer, $gewicht)
+{
+    // insert into bagageobject
+    // passagiernummer, objectvolgnummer op basis van of er eentje is of niet
+    // gewicht mag samen niet meer dan max_gewicht_pp in Vlucht
+
+    $db = maakVerbinding();
+
+    try
+    {
+        $objectvolgnummer = bepaalObjectVolgNummer($passagiernummer);
+        if (bepaalMaxGewicht($passagiernummer, $gewicht))
+        {
+            $sql = "INSERT INTO BagageObject (passagiernummer, objectvolgnummer, gewicht) 
+                    VALUES (:passagiernummer, :objectvolgnummer, :gewicht)";
+            $stmt = $db->prepare($sql);
+            $stmt->execute([
+                'passagiernummer' => $passagiernummer,
+                'objectvolgnummer' => $objectvolgnummer,
+                'gewicht' => $gewicht,
+            ]);
+
+            return true;
+        }
+        else 
+        {
+            return false;
+        }
+
+    }
+    catch (Exception $e)
+    {
+        echo 'Error: ' . $e->getMessage();
+        return false;
+    }
+}
+
+function bepaalObjectVolgNummer($passagiernummer)
+{
+    $extraWhere = "passagiernummer = :passagiernummer";
+    $params = array('passagiernummer' => $passagiernummer);
+    $query = krijgTabel("BagageObject", $extraWhere, null, "MAX(objectvolgnummer) AS maxObjectVolgnummer", $params);
+
+    if (empty($query)) {
+        return 0;
+    }
+
+    // echo $query[0]['maxObjectVolgnummer'] + 1;
+    return $query[0]['maxObjectVolgnummer'] + 1;
+}
+
+function bepaalMaxGewicht($passagiernummer, $gewicht)
+{
+    $extraWhereBagage = "passagiernummer = :passagiernummer";
+    $paramsBagage = array('passagiernummer' => $passagiernummer);
+    $queryBagage = krijgTabel("BagageObject", $extraWhereBagage, null, "SUM(gewicht) AS totaalGewicht", $paramsBagage);
+
+
+    $extraWherePV = 'P.passagiernummer = :passagiernummer';
+    $paramsPV = array('passagiernummer' => $passagiernummer);
+    $queryPV = krijgTabel('Passagier P LEFT JOIN Vlucht V ON V.vluchtnummer = P.vluchtnummer', $extraWherePV, null, 'P.vluchtnummer, P.passagiernummer, V.max_gewicht_pp', $paramsPV);
+
+    $max_gewicht_pp = 0;
+    foreach ($queryPV as $rij)
+    {
+        $max_gewicht_pp = $rij['max_gewicht_pp'];
+    }
+    
+    $totaalGewichtPassagier = 0;
+    foreach ($queryBagage as $rij)
+    {
+        $totaalGewichtPassagier = $rij['totaalGewicht'];
+    }
+
+
+    if ($totaalGewichtPassagier + $gewicht > $max_gewicht_pp)
+    {
+        // echo 'te zwaar';
+        return false; // Dit gewicht is te zwaar en mag er niet bij
+    }
+    else 
+    {
+        // echo 'niet te zwaar';
+        return true; // Dit gewicht is niet te zwaar en mag er bij
+    }
+
+}
+
+function wijzigPassagierGegevens($passagiernummer, $vluchtnummer, $stoel)
+{
+    $db = maakVerbinding();
+
+    try
+    {
+        if (!maxAantalBereikt($vluchtnummer, $passagiernummer))
+        {
+            // echo 'boombaclat';
+            return false;
+        }
+        else
+        {
+            $sql = "UPDATE Passagier
+                    SET stoel = :stoel, vluchtnummer = :vluchtnummer
+                    WHERE passagiernummer = :passagiernummer";
+
+            $stmt = $db->prepare($sql);
+
+            if (!$stmt) {
+                return false;
+            }
+
+            // echo "Uppdate passagiernummer $passagiernummer met vluchtnummer $vluchtnummer en stoel $stoel.";
+
+            $stmt->execute([
+                'vluchtnummer' => $vluchtnummer,
+                'stoel' => $stoel,
+                'passagiernummer' => $passagiernummer
+            ]);
+
+            if ($stmt->rowCount() > 0) {
+                return true;
+            } else {
+                // echo "No rows updated.";
+                return false;
+            }
+        }
+    }
+    catch (Exception $e)
+    {
+        // echo 'Error: ' . $e->getMessage();
         return false;
     }
 }

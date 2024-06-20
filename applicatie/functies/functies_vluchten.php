@@ -37,6 +37,7 @@ function maakAlleVluchten()
 {
     $vluchtnummer = isset($_GET['vluchtnummer']) ? htmlspecialchars($_GET['vluchtnummer']) : ''; // vluchtnummer sanitizen
     $vluchthaven = isset($_GET['vluchthaven']) ? htmlspecialchars($_GET['vluchthaven']) : ''; // vluchthaven sanitizen
+    $_SESSION['gebruikersnaam'] = isset($_SESSION['gebruikersnaam']) ? htmlspecialchars($_SESSION['gebruikersnaam']) : '';
     // echo $vluchthaven;
 
     $query = vluchtSortering($vluchtnummer, $vluchthaven);
@@ -96,7 +97,7 @@ function maakSorteringMenu($VluchtOfPassagier, $vluchtnummer = '')
                 <div class="grid">
                     <div class="formitem">
                         <label for="vluchtnummer">Vluchtnummer</label>
-                        <input type="text" name="vluchtnummer" id="vluchtnummer">
+                        <input type="number" name="vluchtnummer" id="vluchtnummer">
                     </div>
                 </div>
                 <div class="grid">
