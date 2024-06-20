@@ -186,7 +186,7 @@ function registreren($vluchtnummer, $passagiernummer, $wachtwoord, $naam, $gende
     }
     catch (Exception $e)
     {
-        echo $e->getMessage();
+        // echo $e->getMessage();
         return false;
     }
 }
