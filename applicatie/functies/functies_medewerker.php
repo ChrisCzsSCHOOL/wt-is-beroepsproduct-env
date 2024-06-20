@@ -156,6 +156,7 @@ function maakPassagierToevoegen()
                     type="password" 
                     name="password" 
                     id="password"
+                    pattern="^(?=.*[A-Z])(?=.*\d).+$"
                     />
                 </div>
                 <button type="submit" name="toevoegen">Meld passagier aan</button>

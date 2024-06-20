@@ -65,7 +65,8 @@ function loginMelding($goedOfFout)
     if ($goedOfFout == "Goed")
     {
         if (isMedewerker($_SESSION['gebruikersnaam'])) 
-        { // als de gebruikersnaam waarmee ingelogd is een werknemer is, dan moet deze doorgestuurd worden naar het medewerkeroverzicht
+        { // als de gebruikersnaam waarmee ingelogd is een werknemer is, 
+          // dan moet deze doorgestuurd worden naar het medewerkeroverzicht
             $url = "medewerkeroverzicht.php";
             header("Location: $url");
             exit();
