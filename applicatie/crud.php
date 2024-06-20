@@ -168,6 +168,10 @@ function registreren($vluchtnummer, $passagiernummer, $wachtwoord, $naam, $gende
 {
     $db = maakVerbinding();
 
+    if (!isUniekPassagiernummer($passagiernummer)) {
+        throw new Exception('Duplicate passagiernummer detected. Please close the site and try again.');
+    }
+
     // echo $vluchtnummer, $passagiernummer, $wachtwoord, $naam, $gender;
     try 
     {
@@ -186,7 +190,7 @@ function registreren($vluchtnummer, $passagiernummer, $wachtwoord, $naam, $gende
     }
     catch (Exception $e)
     {
-        // echo $e->getMessage();
+        echo $e->getMessage();
         return false;
     }
 }
@@ -219,6 +223,13 @@ function aanmakenVlucht($vluchtnummer, $bestemming, $max_aantal, $max_gewicht_pp
         echo 'Error: ' . $e->getMessage();
         return false;
     }
+}
+
+function kofferRegistratie()
+{
+    // insert into bagageobject
+    // passagiernummer, objectvolgnummer op basis van of er eentje is of niet
+    // gewicht mag samen niet meer dan max_gewicht_pp in Vlucht
 }
 
 ?>

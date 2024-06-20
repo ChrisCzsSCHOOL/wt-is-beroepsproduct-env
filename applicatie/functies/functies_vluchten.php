@@ -37,6 +37,7 @@ function maakAlleVluchten()
 {
     $vluchtnummer = isset($_GET['vluchtnummer']) ? htmlspecialchars($_GET['vluchtnummer']) : ''; // vluchtnummer sanitizen
     $vluchthaven = isset($_GET['vluchthaven']) ? htmlspecialchars($_GET['vluchthaven']) : ''; // vluchthaven sanitizen
+    $_SESSION['gebruikersnaam'] = isset($_SESSION['gebruikersnaam']) ? htmlspecialchars($_SESSION['gebruikersnaam']) : '';
     // echo $vluchthaven;
 
     $query = vluchtSortering($vluchtnummer, $vluchthaven);
