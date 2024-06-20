@@ -137,106 +137,64 @@ include_once("functies/functies_inloggen.php");
 
 function maakIncheckFormulier()
 {
-    //if (isset($_SESSION['gebruikersnaam']) || true)
-    if (true)
+    $html = '';
+
+    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["toevoegen"])) 
     {
-        //if (isMedewerker($_SESSION['gebruikersnaam']) || true)
-        if (true)
+        $passagiernummer = is_numeric($_POST['passagiernummer']) ? htmlspecialchars($_POST["passagiernummer"]) : 0;
+        // objectvolgnummer wordt bepaald door of er al eentje is.
+        $gewicht = is_numeric($_POST['gewicht']) ? htmlspecialchars($_POST["gewicht"]) : 0;
+        
+        $_SESSION['passagiernummer'] = $passagiernummer;
+        $_SESSION['gewicht'] = $gewicht;
+        
+        $kofferGeregistreerd = kofferRegistratie($passagiernummer, $gewicht);
+        if ($kofferGeregistreerd)
         {
-            $html = '';
-            $html .=  
-            '<h3>Inchecken:</h3>
-                <div class="gridform">
-                <form method="post" action="mijnvluchten.html">
-                    <div class="formitem">
-                        <label for="ticketnummer">Ticketnummer: (GELRVLCHT...)</label>
-                        <input required 
-                        type="text" 
-                        name="ticketnummer" 
-                        id="ticketnummer"
-                        pattern="GELRVLCHT.*" 
-                        title="Ticketnummer moet starten met GELRVLCHT..." 
-                        placeholder="GELRVLCHT..."
-                        />
-                    </div>
-
-                    <div class="formitem">
-                        <label for="vluchtnummer">Vluchtnummer: (KLMGELR...)</label>
-                        <input required 
-                        type="text" 
-                        name="vluchtnummer" 
-                        id="vluchtnummer"
-                        pattern="KLMGELR.*" 
-                        title="Vluchtnummer moet starten met KLMGELR..." 
-                        placeholder="KLMGELR..."
-                        />
-                    </div>
-                    <!-- https://chat.openai.com/share/bb7700a9-906a-4660-9565-46d9e687b05c voor pattern en title hierboven!-->
-                    
-                    <div class="formitem">
-                        <label for="firstname">Voornaam</label>
-                        <input required 
-                        type="text" 
-                        name="firstname" 
-                        id="firstname"
-                        placeholder="Voornaam"
-                        />
-                    </div>
-                    
-                    <div class="formitem">
-                        <label for="lastname">Achternaam</label>
-                        <input 
-                        required 
-                        type="text" 
-                        name="lastname" 
-                        id="lastname"
-                        placeholder="Achternaam"
-                        />
-                    </div>
-                            
-                    <div class="formitem">
-                        <label for="koffergewicht">Koffergewicht</label>
-                        <select required name="koffergewicht" id="koffergewicht">
-                            <option value="">Maak een keuze</option>
-                            <option value="10">10kg</option>
-                            <option value="20">20kg</option>
-                            <option value="30">30kg</option>
-                            <option value="40">40kg</option>
-                        </select>
-                    </div>
-                    
-                    <div class="formitem">
-                        <label for="koffergewicht2">Koffergewicht koffer 2 (optioneel)</label>
-                        <select name="koffergewicht2" id="koffergewicht2">
-                            <option value="">Maak een keuze</option>
-                            <option value="10">10kg</option>
-                            <option value="20">20kg</option>
-                            <option value="30">30kg</option>
-                            <option value="40">40kg</option>
-                        </select>
-                    </div>
-                    <input 
-                    type="submit" 
-                    value="Check in!"
-                    />
-                </form>
-            </div>
-            <div class="grid">
-                <div class="blokje2">
-                    <h4>Meer dan 2 koffers?</h4>
-                    <p>Klik dan <strong><a href="kofferextra.html">hier!</a></strong></p>
-                </div>
-            </div>';
-
+            // echo 'great succes';
+            $url = 'incheckpagina.php';
+            header("Location: $url");
+            exit();
         }
         else 
         {
-            // $url = ' index.php';
-            // header("Location: $url");
-            // exit();
+            $html .= '<h2>Koffer is te zwaar!</h2>';
         }
     }
-    return $html;
+
+    $html .= '
+        <h2>Vul hier een koffer in!</h2>
+        <p>Vul hier uw koffer in. Wanneer deze ingecheckt is kunt u de volgende koffer invullen.</p>
+        <div class="gridform">
+            <form method="post" action="">
+                <div class="formitem">
+                    <label for="passagiernummer">Maximaal aantal personen</label>
+                    <input 
+                    required 
+                    type="number" 
+                    name="passagiernummer" 
+                    id="passagiernummer"
+                    placeholder="Passagiernummer"
+                    />
+                </div>
+                <div class="formitem">
+                    <label for="gewicht">Koffer gewicht in kg</label>
+                    <input 
+                    required 
+                    type="number" 
+                    name="gewicht" 
+                    id="gewicht"
+                    placeholder="gewicht in kg"
+                    />
+                </div>
+                <input type="submit" name="toevoegen" value="Check koffer in!" />
+            </form>
+        </div>
+    ';
+
+
+
+   return $html;
 }
 
 // ----------------------------- einde incheckpagina.php ---------------------------

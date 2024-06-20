@@ -225,11 +225,92 @@ function aanmakenVlucht($vluchtnummer, $bestemming, $max_aantal, $max_gewicht_pp
     }
 }
 
-function kofferRegistratie()
+function kofferRegistratie($passagiernummer, $gewicht)
 {
     // insert into bagageobject
     // passagiernummer, objectvolgnummer op basis van of er eentje is of niet
     // gewicht mag samen niet meer dan max_gewicht_pp in Vlucht
+
+    $db = maakVerbinding();
+
+    try
+    {
+        $objectvolgnummer = bepaalObjectVolgNummer($passagiernummer);
+        if (bepaalMaxGewicht($passagiernummer, $gewicht))
+        {
+            $sql = "INSERT INTO BagageObject (passagiernummer, objectvolgnummer, gewicht) 
+                    VALUES (:passagiernummer, :objectvolgnummer, :gewicht)";
+            $stmt = $db->prepare($sql);
+            $stmt->execute([
+                'passagiernummer' => $passagiernummer,
+                'objectvolgnummer' => $objectvolgnummer,
+                'gewicht' => $gewicht,
+            ]);
+
+            return true;
+        }
+        else 
+        {
+            return false;
+        }
+
+    }
+    catch (Exception $e)
+    {
+        echo 'Error: ' . $e->getMessage();
+        return false;
+    }
+}
+
+function bepaalObjectVolgNummer($passagiernummer)
+{
+    $extraWhere = "passagiernummer = :passagiernummer";
+    $params = array('passagiernummer' => $passagiernummer);
+    $query = krijgTabel("BagageObject", $extraWhere, null, "MAX(objectvolgnummer) AS maxObjectVolgnummer", $params);
+
+    if (empty($query)) {
+        return 0;
+    }
+
+    // echo $query[0]['maxObjectVolgnummer'] + 1;
+    return $query[0]['maxObjectVolgnummer'] + 1;
+}
+
+function bepaalMaxGewicht($passagiernummer, $gewicht)
+{
+    $extraWhereBagage = "passagiernummer = :passagiernummer";
+    $paramsBagage = array('passagiernummer' => $passagiernummer);
+    $queryBagage = krijgTabel("BagageObject", $extraWhereBagage, null, "SUM(gewicht) AS totaalGewicht", $paramsBagage);
+
+
+    $extraWherePV = 'P.passagiernummer = :passagiernummer';
+    $paramsPV = array('passagiernummer' => $passagiernummer);
+    $queryPV = krijgTabel('Passagier P LEFT JOIN Vlucht V ON V.vluchtnummer = P.vluchtnummer', $extraWherePV, null, 'P.vluchtnummer, P.passagiernummer, V.max_gewicht_pp', $paramsPV);
+
+    $max_gewicht_pp = 0;
+    foreach ($queryPV as $rij)
+    {
+        $max_gewicht_pp = $rij['max_gewicht_pp'];
+    }
+    
+    $totaalGewichtPassagier = 0;
+    foreach ($queryBagage as $rij)
+    {
+        $totaalGewichtPassagier = $rij['totaalGewicht'];
+    }
+
+
+    if ($totaalGewichtPassagier + $gewicht > $max_gewicht_pp)
+    {
+        // echo 'te zwaar';
+        return false; // Dit gewicht is te zwaar en mag er niet bij
+    }
+    else 
+    {
+        // echo 'niet te zwaar';
+        return true; // Dit gewicht is niet te zwaar en mag er bij
+    }
+
 }
 
 ?>

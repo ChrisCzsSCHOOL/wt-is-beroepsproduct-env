@@ -212,7 +212,7 @@ function maakVluchtToevoegen()
             $vluchtnummer = bepaalHoogsteVluchtnummer();
         } while (!isUniekVluchtnummer($vluchtnummer));
 
-        echo $vluchtnummer;
+        // echo $vluchtnummer;
 
         $_SESSION['bestemming'] = $bestemming;
         $_SESSION['max_aantal'] = $max_aantal;
@@ -220,8 +220,7 @@ function maakVluchtToevoegen()
         $_SESSION['max_totaalgewicht'] = $max_totaalgewicht;
         $_SESSION['maatschappijcode'] = $maatschappijcode;
 
-        // Debugging statements
-        var_dump($vluchtnummer, $bestemming, $max_aantal, $max_gewicht_pp, $max_totaalgewicht, $maatschappijcode);
+        // var_dump($vluchtnummer, $bestemming, $max_aantal, $max_gewicht_pp, $max_totaalgewicht, $maatschappijcode);
 
         $toevoegenGelukt = aanmakenVlucht($vluchtnummer, $bestemming, $max_aantal, $max_gewicht_pp, $max_totaalgewicht, $maatschappijcode, null, null);
         if ($toevoegenGelukt)
