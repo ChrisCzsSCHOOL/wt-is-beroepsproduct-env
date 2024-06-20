@@ -175,24 +175,63 @@ function registreren($vluchtnummer, $passagiernummer, $wachtwoord, $naam, $gende
     // echo $vluchtnummer, $passagiernummer, $wachtwoord, $naam, $gender;
     try 
     {
-        $sql = "INSERT INTO Passagier (vluchtnummer, passagiernummer, wachtwoord, naam, geslacht) VALUES (:vluchtnummer, :passagiernummer, :wachtwoord, :naam, :geslacht)";
+        if (maxAantalBereikt($vluchtnummer, $passagiernummer))
+        {
+            return false;
+        }
+        else
+        {
+            $sql = "INSERT INTO Passagier (vluchtnummer, passagiernummer, wachtwoord, naam, geslacht) VALUES (:vluchtnummer, :passagiernummer, :wachtwoord, :naam, :geslacht)";
 
-        $stmt = $db->prepare($sql); 
-        $stmt->execute([
-            'vluchtnummer' => $vluchtnummer,
-            'passagiernummer' => $passagiernummer, 
-            'wachtwoord' => $wachtwoord,
-            'naam' => $naam,
-            'geslacht' => $gender,
-        ]);
+            $stmt = $db->prepare($sql); 
+            $stmt->execute([
+                'vluchtnummer' => $vluchtnummer,
+                'passagiernummer' => $passagiernummer, 
+                'wachtwoord' => $wachtwoord,
+                'naam' => $naam,
+                'geslacht' => $gender,
+            ]);
 
-        return true;
+            return true;
+        }
     }
     catch (Exception $e)
     {
         echo $e->getMessage();
         return false;
     }
+}
+
+function maxAantalBereikt($vluchtnummer, $passagiernummer)
+{
+    $extraWhere = "vluchtnummer = :vluchtnummer";
+    $params = array('vluchtnummer' => $vluchtnummer);
+    $queryV = krijgTabel("Vlucht", $extraWhere, 1, '', $params);
+    $queryP = krijgTabel("Passagier", $extraWhere, null, "COUNT(*) AS aantalPassagiers", $params);
+
+    // print_r($queryP);
+    // print_r($queryV);
+
+    $max_aantal = 0;
+    foreach ($queryV as $rij)
+    {
+        $max_aantal = $rij['max_aantal'];
+    }
+
+    echo $aantalPassagiers = $queryP[0]['aantalPassagiers'];
+    echo $max_aantal;
+
+    if ($aantalPassagiers + 1 > $max_aantal)
+    {
+        // Kan niet nog een persoon bij de vlucht toegevoegd worden, want deze is vol.
+        return false;
+    }
+    else
+    {
+        // Er is ruimte voor nog een persoon.
+        return true;
+    }
+
 }
 
 function aanmakenVlucht($vluchtnummer, $bestemming, $max_aantal, $max_gewicht_pp, $max_totaalgewicht, $maatschappijcode, $vertrektijd = null, $gatecode = null)
