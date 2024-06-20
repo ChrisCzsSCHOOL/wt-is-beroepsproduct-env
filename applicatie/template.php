@@ -7,7 +7,7 @@ include_once("functies.php");
 <?=maakHeader();?>
 
 <main>
-    <? // =bepaalMaxGewicht(23455, 20);?>
+
 </main>
 
 <?=maakFooter();?>
