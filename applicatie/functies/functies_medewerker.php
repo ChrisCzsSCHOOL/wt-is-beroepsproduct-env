@@ -314,4 +314,113 @@ function maakAlleMaatschappijcodes()
     return $html;
 }
 
+function maakPassagierWijzingen()
+{
+    $html = '';
+    if (isMedewerker($_SESSION['gebruikersnaam']))
+    {
+        $passagiernummer = 0;
+        if (isset($_GET['passagiernummer']) && is_numeric($_GET['passagiernummer']))
+        {
+            $passagiernummer = htmlspecialchars($_GET['passagiernummer']);
+            $extraWhere = 'passagiernummer = :passagiernummer';
+            $params = array('passagiernummer' => $passagiernummer);
+        
+            $query = krijgTabel("Passagier", $extraWhere, null,'', $params);
+        }
+
+
+        $html .= '
+            <form method="get" action="">
+                    <div class="grid">
+                        <div class="formitem">
+                            <label for="passagiernummer">Passagiernummer</label>
+                            <input 
+                            type="number" 
+                            name="passagiernummer" 
+                            id="passagiernummer"';
+
+                            if (isset($_GET['passagiernummer']) && is_numeric($_GET['passagiernummer']))
+                            {
+                                $html .= ' placeholder="'. htmlspecialchars($_GET['passagiernummer']) .'"';
+                            }
+
+                            $html .= '>
+                        </div>
+                    </div>
+                    <div class="grid">
+                        <div class="formitem">
+                            <button type="submit">Submit</button>
+                        </div>
+                    </div>
+                </form>
+        ';
+        if (isset($query))
+        {
+            foreach ($query as $rij)
+            {
+                if ($_SERVER["REQUEST_METHOD"] == 'POST' && isset($_POST['wijzigen']))
+                { 
+                    if (is_numeric($_POST["vluchtnummer"])) { $vluchtnummer = htmlspecialchars($_POST["vluchtnummer"]); } else { $vluchtnummer = 0; }
+                    $stoel = htmlspecialchars($_POST['stoel']);
+                    $html .= valideerGegevens($passagiernummer, $vluchtnummer, $stoel);
+                }
+
+                $html .= '
+                    <form method="post" action="">
+                        <div class="grid">
+                            <div class="formitem">
+                                <label for="vluchtnummer">Vluchtnummer</label>
+                                <input 
+                                type="number" 
+                                name="vluchtnummer" 
+                                id="vluchtnummer"
+                                placeholder="'. $rij['vluchtnummer'] .'">
+                            </div>
+                        </div>
+                        <div class="grid">
+                            <div class="formitem">
+                                <label for="stoel">Stoel</label>
+                                <input 
+                                type="text" 
+                                name="stoel" 
+                                id="stoel"
+                                placeholder="'. $rij['stoel'] .'">
+                            </div>
+                        </div>
+                        <div class="grid">
+                            <div class="formitem">
+                                <button type="submit" name="wijzigen">Submit</button>
+                            </div>
+                        </div>
+                    </form>
+                ';
+            }
+        }
+    }
+    else 
+    {
+        $url = 'index.php';
+        header("Location: $url");
+        exit();
+    }
+    return $html;
+}
+
+function valideerGegevens($passagiernummer, $vluchtnummer, $stoel)
+{
+    $html = '';
+
+    $valideer = wijzigPassagierGegevens($passagiernummer, $vluchtnummer, $stoel);
+    if ($valideer)
+    {
+        $html .= '<h2>Wijzigen is gelukt!</h2>';
+    }
+    else 
+    {
+        $html .= '<h2>Wijzigen is NIET gelukt!</h2>';
+    }
+    return $html;
+}
+
 ?>

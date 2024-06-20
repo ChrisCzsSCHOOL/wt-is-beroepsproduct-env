@@ -97,7 +97,7 @@ function maakSorteringMenu($VluchtOfPassagier, $vluchtnummer = '')
                 <div class="grid">
                     <div class="formitem">
                         <label for="vluchtnummer">Vluchtnummer</label>
-                        <input type="text" name="vluchtnummer" id="vluchtnummer">
+                        <input type="number" name="vluchtnummer" id="vluchtnummer">
                     </div>
                 </div>
                 <div class="grid">

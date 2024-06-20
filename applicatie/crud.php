@@ -218,9 +218,10 @@ function maxAantalBereikt($vluchtnummer, $passagiernummer)
         $max_aantal = $rij['max_aantal'];
     }
 
-    echo $aantalPassagiers = $queryP[0]['aantalPassagiers'];
-    echo $max_aantal;
-
+    
+    // echo $max_aantal;
+    
+    $aantalPassagiers = $queryP[0]['aantalPassagiers'];
     if ($aantalPassagiers + 1 > $max_aantal)
     {
         // Kan niet nog een persoon bij de vlucht toegevoegd worden, want deze is vol.
@@ -350,6 +351,52 @@ function bepaalMaxGewicht($passagiernummer, $gewicht)
         return true; // Dit gewicht is niet te zwaar en mag er bij
     }
 
+}
+
+function wijzigPassagierGegevens($passagiernummer, $vluchtnummer, $stoel)
+{
+    $db = maakVerbinding();
+
+    try
+    {
+        if (!maxAantalBereikt($vluchtnummer, $passagiernummer))
+        {
+            // echo 'boombaclat';
+            return false;
+        }
+        else
+        {
+            $sql = "UPDATE Passagier
+                    SET stoel = :stoel, vluchtnummer = :vluchtnummer
+                    WHERE passagiernummer = :passagiernummer";
+
+            $stmt = $db->prepare($sql);
+
+            if (!$stmt) {
+                return false;
+            }
+
+            // echo "Uppdate passagiernummer $passagiernummer met vluchtnummer $vluchtnummer en stoel $stoel.";
+
+            $stmt->execute([
+                'vluchtnummer' => $vluchtnummer,
+                'stoel' => $stoel,
+                'passagiernummer' => $passagiernummer
+            ]);
+
+            if ($stmt->rowCount() > 0) {
+                return true;
+            } else {
+                // echo "No rows updated.";
+                return false;
+            }
+        }
+    }
+    catch (Exception $e)
+    {
+        // echo 'Error: ' . $e->getMessage();
+        return false;
+    }
 }
 
 ?>
