@@ -14,7 +14,7 @@ function maakInlogpagina()
 
     $html .= '
             <div class="gridform">
-                <form method="post" action="">
+                <form method="post" action="inlogpagina.php">
                     <div class="formitem">
                         <label for="username">Passagiersnummer</label>
                         <input 
@@ -35,7 +35,7 @@ function maakInlogpagina()
                         id="password"
                         />
                     </div>
-                    <button type="sumbit" name="inloggen">Log in</button>
+                    <button type="submit" name="inloggen">Log in</button>
                 <p>Nog geen account? <a id="zwartelink" href="registratieformulier.php">Klik dan hier!</a></p>
                 </form>
             </div>';
@@ -104,10 +104,10 @@ function maakRegistratieformulier()
     <h2>Aanmelden</h2>
     <p>Meld je aan om <em>klant</em> te worden!</p>
     
-    <h3>Bij aanmelding wordt u passagiernummer: '. bepaalHoogstePassagiernummer() .'</h3>
+    <h3>Bij aanmelding wordt u passagiernummer: '. bepaalHoogsteNummer("Passagier", "passagiernummer") .'</h3>
 
         <div class="gridform">
-            <form method="POST" action="">
+            <form method="POST" action="registratieformulier.php">
                 <div class="formitem">
                     <label for="vluchtnummer">Vluchtnummer:</label>
                     <input required 
@@ -121,7 +121,7 @@ function maakRegistratieformulier()
                 </div>
 
                 <div class="formitem">
-                    <label for="firstname">Naam</label>
+                    <label for="naam">Naam</label>
                     <input required 
                     type="text" 
                     name="naam" 

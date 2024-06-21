@@ -97,7 +97,7 @@ function maakPassagierToevoegen()
         <h2>Maak nieuwe passagier aan:</h2>
 
         <div class="gridform">
-            <form method="POST" action="">
+            <form method="POST" action="passagiertoevoegen.php">
                 <div class="formitem">
                     <label for="vluchtnummer">Vluchtnummer:</label>
                     <input required 
@@ -111,7 +111,7 @@ function maakPassagierToevoegen()
                 </div>
 
                 <div class="formitem">
-                    <label for="firstname">Naam</label>
+                    <label for="naam">Naam</label>
                     <input required 
                     type="text" 
                     name="naam" 
@@ -149,9 +149,9 @@ function regelRegistratieVariabele($RegOfPas)
     $maxAttempts = 5;
     $attempt = 0;
     do {
-        $passagiernummer = bepaalHoogstePassagiernummer();
+        $passagiernummer = bepaalHoogsteNummer("Passagier", "passagiernummer");
         $attempt++;
-    } while (!isUniekPassagiernummer($passagiernummer) && $attempt < $maxAttempts);
+    } while (!isUniekNummer('Passagier', 'passagiernummer', $passagiernummer) && $attempt < $maxAttempts);
 
     if ($attempt == $maxAttempts) {
         $html .= '<h2>Kon geen uniek passagiernummer genereren, probeer opnieuw.</h2>';
@@ -187,13 +187,6 @@ function regelRegistratieVariabele($RegOfPas)
     return $html;
 }
 
-function isUniekPassagiernummer($passagiernummer) {
-    $db = maakVerbinding();
-    $sql = "SELECT COUNT(*) FROM Passagier WHERE passagiernummer = :passagiernummer";
-    $stmt = $db->prepare($sql);
-    $stmt->execute([':passagiernummer' => $passagiernummer]);
-    return $stmt->fetchColumn() == 0;
-}
 
 function maakVluchtToevoegen()
 {
@@ -209,8 +202,8 @@ function maakVluchtToevoegen()
 
         do 
         {
-            $vluchtnummer = bepaalHoogsteVluchtnummer();
-        } while (!isUniekVluchtnummer($vluchtnummer));
+            $vluchtnummer = bepaalHoogsteNummer("Vlucht", "vluchtnummer");
+        } while (!isUniekNummer('Vlucht', 'vluchtnummer', $vluchtnummer));
 
         // echo $vluchtnummer;
 
@@ -240,7 +233,7 @@ function maakVluchtToevoegen()
     $html .= '
         <h2>Maak vlucht aan</h2>
         <div class="gridform">
-            <form method="post" action="">
+            <form method="post" action="vluchttoevoegen.php">
                 <div class="formitem">
                     <label for="vluchthaven">Vluchthaven</label>
                     <select name="vluchthaven" id="vluchthaven">
@@ -293,11 +286,11 @@ function maakVluchtToevoegen()
     return $html;
 }
 
-function isUniekVluchtnummer($vluchtnummer) {
+function isUniekNummer($tabel, $kolom, $nummer) {
     $db = maakVerbinding();
-    $sql = "SELECT COUNT(*) FROM Vlucht WHERE vluchtnummer = :vluchtnummer";
+    $sql = "SELECT COUNT(*) FROM $tabel WHERE $kolom = :nummer";
     $stmt = $db->prepare($sql);
-    $stmt->execute([':vluchtnummer' => $vluchtnummer]);
+    $stmt->execute([':nummer' => $nummer]);
     return $stmt->fetchColumn() == 0;
 }
 
@@ -331,7 +324,7 @@ function maakPassagierWijzingen()
 
 
         $html .= '
-            <form method="get" action="">
+            <form method="get" action="passagierwijzigen.php">
                     <div class="grid">
                         <div class="formitem">
                             <label for="passagiernummer">Passagiernummer</label>
@@ -367,7 +360,7 @@ function maakPassagierWijzingen()
                 }
 
                 $html .= '
-                    <form method="post" action="">
+                    <form method="post" action="passagierwijzigen.php">
                         <div class="grid">
                             <div class="formitem">
                                 <label for="vluchtnummer">Vluchtnummer</label>
