@@ -31,7 +31,7 @@ function maakIncheckFormulier()
         <h2>Vul hier een koffer in!</h2>
         <p>Vul hier uw koffer in. Wanneer deze ingecheckt is kunt u de volgende koffer invullen.</p>
         <div class="gridform">
-            <form method="post" action="">
+            <form method="post" action="incheckpagina.php">
                 <div class="formitem">
                     <label for="passagiernummer">Passagiernummer</label>
                     <input 

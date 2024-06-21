@@ -97,7 +97,7 @@ function maakPassagierToevoegen()
         <h2>Maak nieuwe passagier aan:</h2>
 
         <div class="gridform">
-            <form method="POST" action="">
+            <form method="POST" action="passagiertoevoegen.php">
                 <div class="formitem">
                     <label for="vluchtnummer">Vluchtnummer:</label>
                     <input required 
@@ -111,7 +111,7 @@ function maakPassagierToevoegen()
                 </div>
 
                 <div class="formitem">
-                    <label for="firstname">Naam</label>
+                    <label for="naam">Naam</label>
                     <input required 
                     type="text" 
                     name="naam" 
@@ -233,7 +233,7 @@ function maakVluchtToevoegen()
     $html .= '
         <h2>Maak vlucht aan</h2>
         <div class="gridform">
-            <form method="post" action="">
+            <form method="post" action="vluchttoevoegen.php">
                 <div class="formitem">
                     <label for="vluchthaven">Vluchthaven</label>
                     <select name="vluchthaven" id="vluchthaven">
@@ -324,7 +324,7 @@ function maakPassagierWijzingen()
 
 
         $html .= '
-            <form method="get" action="">
+            <form method="get" action="passagierwijzigen.php">
                     <div class="grid">
                         <div class="formitem">
                             <label for="passagiernummer">Passagiernummer</label>
@@ -360,7 +360,7 @@ function maakPassagierWijzingen()
                 }
 
                 $html .= '
-                    <form method="post" action="">
+                    <form method="post" action="passagierwijzigen.php">
                         <div class="grid">
                             <div class="formitem">
                                 <label for="vluchtnummer">Vluchtnummer</label>

@@ -85,7 +85,7 @@ function maakSorteringMenu($VluchtOfPassagier, $vluchtnummer = '')
         <h2>Alle vluchten:</h2>
         <h3>Sorteren op:</h3>
 
-        <form method="get" action="">
+        <form method="get" action="allevluchten.php">
             <div class="grid">
                 <div class="formitem">
                     <label for="vluchtnummer">Vluchtnummer:</label>
@@ -208,7 +208,7 @@ function maakAllePassagiersOpVlucht()
             foreach($query as $rij)
             {
                 $html .= '<tr>';
-                $html .= '<td><a href="specifiekevlucht.php?vluchtnummer='. $vluchtnummer .'&passagiernummer='. $rij['passagiernummer'] .'">'.$rij['passagiernummer'].'</td>';
+                $html .= '<td><a href="specifiekevlucht.php?vluchtnummer='. $vluchtnummer .'&passagiernummer='. $rij['passagiernummer'] .'">'.$rij['passagiernummer'].'</a></td>';
 
                 if($passagiernummer)
                 {
