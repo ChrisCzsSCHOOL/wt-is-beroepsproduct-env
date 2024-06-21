@@ -16,7 +16,7 @@ function maakIncheckFormulier()
         $kofferGeregistreerd = kofferRegistratie($passagiernummer, $gewicht);
         if ($kofferGeregistreerd)
         {
-            // echo 'great succes';
+            // echo 'koffer geregistreerd';
             $url = 'incheckpagina.php';
             header("Location: $url");
             exit();

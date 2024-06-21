@@ -3,10 +3,10 @@
 function krijgTabel($tabel, $extraWhere = '', $limit = null, $extraConditie = '', $params = array())
 {
 
-    // Ter verduidelijking voor deze functie, deze is gemaakt door mij tijdens het iproject.
+    // Ter verduidelijking voor deze functie, deze is gemaakt door mij tijdens het iproject en ook daar gebruikt om tabellen op te halen.
 
     $db = maakVerbinding();
-    $sql = "SELECT"; // begin van SQL
+    $sql = "SELECT"; // begin van SQL statament
 
     if (!is_null($limit)) 
     { // Kijkt of er een top in het sql statement moet

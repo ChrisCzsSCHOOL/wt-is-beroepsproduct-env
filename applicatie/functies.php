@@ -66,8 +66,6 @@ function maakFooter()
 
 // ----------------------------- einde algemene functies------------------------- 
 
-
-// ----------------------------- index.php ----------------------------- 
 function maakIndexMenu() 
 {
     $html = "";
@@ -116,28 +114,11 @@ function maakIndexMenu()
     return $html;
 }
 
-// ----------------------------- einde index.php ----------------------------- 
-
-
-// ----------------------------- begin allevluchten.php ----------------------------- 
-
 include_once("functies/functies_vluchten.php");
-
-// ----------------------------- einde allevluchten.php ----------------------------- 
-
-
-// ----------------------------- begin inlogpagina.php ----------------------------- 
 
 include_once("functies/functies_inloggen.php");
 
-// ----------------------------- einde inlogpagina.php ----------------------------- 
-
-
-// ----------------------------- begin incheckpagina.php ---------------------------
-
 include_once("functies/functies_passagier.php");
-
-// ----------------------------- einde incheckpagina.php ---------------------------
 
 include_once("functies/functies_medewerker.php");
 
