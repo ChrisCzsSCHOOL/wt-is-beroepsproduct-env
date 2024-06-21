@@ -1,46 +1,38 @@
 <?php
-function vluchtSortering($vluchtnummer = '', $vluchthaven = '')
+function vluchtSortering($vluchtnummer = '', $vluchthaven = '', $datum = '')
 {
-    if ($vluchtnummer !== '' && is_numeric($vluchtnummer)) // kijkt of vluchtnummer een nummer is en niet leeg 
+    $extraWhere = "vertrektijd > GETDATE()";
+
+    if ($vluchtnummer !== '' && is_numeric($vluchtnummer)) 
     {
-        if ($vluchthaven !== '')
-        {
-            $extraWhere = "vluchtnummer = '" . $vluchtnummer . "' AND bestemming = '". $vluchthaven ."' AND vertrektijd > GETDATE()"; 
-            $query = krijgTabel("Vlucht", $extraWhere);
-        }
-        else 
-        {
-            $extraWhere = "vluchtnummer = '" . $vluchtnummer . "' AND vertrektijd > GETDATE()"; 
-            $query = krijgTabel("Vlucht", $extraWhere);    
-        }
-    } 
-    else 
-    {
-        if ($vluchthaven !== '')
-        {
-            $extraWhere = "bestemming = '". $vluchthaven ."' AND vertrektijd > GETDATE()"; 
-            // echo $extraWhere;
-            $query = krijgTabel("Vlucht", $extraWhere);
-            // print_r($query);
-            
-        }
-        else 
-        {
-            $extraWhere = "vertrektijd > GETDATE()";
-            $query = krijgTabel("Vlucht", $extraWhere);
-        }
+        $extraWhere .= " AND vluchtnummer = '" . $vluchtnummer . "'";
     }
+
+    if ($vluchthaven !== '')
+    {
+        $extraWhere .= " AND bestemming = '" . $vluchthaven . "'";
+    }
+
+    if ($datum !== '') 
+    {
+        $extraWhere .= " AND vertrektijd > '" . $datum . "'";
+    }
+
+    $query = krijgTabel("Vlucht", $extraWhere);
+    
     return $query;
 }
+
 
 function maakAlleVluchten()
 {
     $vluchtnummer = isset($_GET['vluchtnummer']) ? htmlspecialchars($_GET['vluchtnummer']) : ''; // vluchtnummer sanitizen
     $vluchthaven = isset($_GET['vluchthaven']) ? htmlspecialchars($_GET['vluchthaven']) : ''; // vluchthaven sanitizen
+    $datum = isset($_GET['datum']) ? $_GET['datum'] : '';
     $_SESSION['gebruikersnaam'] = isset($_SESSION['gebruikersnaam']) ? htmlspecialchars($_SESSION['gebruikersnaam']) : '';
     // echo $vluchthaven;
 
-    $query = vluchtSortering($vluchtnummer, $vluchthaven);
+    $query = vluchtSortering($vluchtnummer, $vluchthaven, $datum);
 
     $html = '<div>';
     $html .= '<table>';
@@ -88,34 +80,40 @@ function maakAlleVluchten()
 
 function maakSorteringMenu($VluchtOfPassagier, $vluchtnummer = '')
 {
-        $html = "";
-        $html.= '
-            <h2>Alle vluchten:</h2>
-            <h3>Sorteren op:</h3>
+    $html = "";
+    $html .= '
+        <h2>Alle vluchten:</h2>
+        <h3>Sorteren op:</h3>
 
-            <form method="get" action="">
-                <div class="grid">
-                    <div class="formitem">
-                        <label for="vluchtnummer">Vluchtnummer</label>
-                        <input type="number" name="vluchtnummer" id="vluchtnummer">
-                    </div>
+        <form method="get" action="">
+            <div class="grid">
+                <div class="formitem">
+                    <label for="vluchtnummer">Vluchtnummer:</label>
+                    <input type="number" name="vluchtnummer" id="vluchtnummer">
                 </div>
-                <div class="grid">
-                    <div class="formitem">
-                        <label for="vluchthaven">Vluchthaven</label>
-                        <select name="vluchthaven" id="vluchthaven">
-                            <option value="">Maak een keuze</option>
-                            '. maakAlleVluchtcodes() .'
-                        </select>
-                    </div>
+            </div>
+            <div class="grid">
+                <div class="formitem">
+                    <label for="vluchthaven">Vluchthaven:</label>
+                    <select name="vluchthaven" id="vluchthaven">
+                        <option value="">Maak een keuze</option>
+                        '. maakAlleVluchtcodes() .'
+                    </select>
                 </div>
-                <div class="grid">
-                    <div class="formitem">
-                        <button type="submit">Submit</button>
-                    </div>
+            </div>
+            <div class="grid">
+                <div class="formitem">
+                    <label for="datum">Vluchten na datum:</label>
+                    <input type="date" name="datum" id="datum">
                 </div>
-            </form>
-        ';
+            </div>
+            <div class="grid">
+                <div class="formitem">
+                    <button type="submit">Submit</button>
+                </div>
+            </div>
+        </form>
+    ';
     return $html;
 }
 

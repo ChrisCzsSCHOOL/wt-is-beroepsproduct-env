@@ -149,9 +149,9 @@ function regelRegistratieVariabele($RegOfPas)
     $maxAttempts = 5;
     $attempt = 0;
     do {
-        $passagiernummer = bepaalHoogstePassagiernummer();
+        $passagiernummer = bepaalHoogsteNummer("Passagier", "passagiernummer");
         $attempt++;
-    } while (!isUniekPassagiernummer($passagiernummer) && $attempt < $maxAttempts);
+    } while (!isUniekNummer('Passagier', 'passagiernummer', $passagiernummer) && $attempt < $maxAttempts);
 
     if ($attempt == $maxAttempts) {
         $html .= '<h2>Kon geen uniek passagiernummer genereren, probeer opnieuw.</h2>';
@@ -187,13 +187,6 @@ function regelRegistratieVariabele($RegOfPas)
     return $html;
 }
 
-function isUniekPassagiernummer($passagiernummer) {
-    $db = maakVerbinding();
-    $sql = "SELECT COUNT(*) FROM Passagier WHERE passagiernummer = :passagiernummer";
-    $stmt = $db->prepare($sql);
-    $stmt->execute([':passagiernummer' => $passagiernummer]);
-    return $stmt->fetchColumn() == 0;
-}
 
 function maakVluchtToevoegen()
 {
@@ -209,8 +202,8 @@ function maakVluchtToevoegen()
 
         do 
         {
-            $vluchtnummer = bepaalHoogsteVluchtnummer();
-        } while (!isUniekVluchtnummer($vluchtnummer));
+            $vluchtnummer = bepaalHoogsteNummer("Vlucht", "vluchtnummer");
+        } while (!isUniekNummer('Vlucht', 'vluchtnummer', $vluchtnummer));
 
         // echo $vluchtnummer;
 
@@ -293,11 +286,11 @@ function maakVluchtToevoegen()
     return $html;
 }
 
-function isUniekVluchtnummer($vluchtnummer) {
+function isUniekNummer($tabel, $kolom, $nummer) {
     $db = maakVerbinding();
-    $sql = "SELECT COUNT(*) FROM Vlucht WHERE vluchtnummer = :vluchtnummer";
+    $sql = "SELECT COUNT(*) FROM $tabel WHERE $kolom = :nummer";
     $stmt = $db->prepare($sql);
-    $stmt->execute([':vluchtnummer' => $vluchtnummer]);
+    $stmt->execute([':nummer' => $nummer]);
     return $stmt->fetchColumn() == 0;
 }
 

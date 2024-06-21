@@ -142,25 +142,12 @@ function isMedewerker($balienummer)
     }
 }
 
-function bepaalHoogstePassagiernummer()
+function bepaalHoogsteNummer($tabel, $kolom)
 {
     $db = maakVerbinding();
-    $sql = krijgTabel("Passagier", '', null, "MAX(passagiernummer) AS hoogstePassagiernummer");
+    $sql = krijgTabel($tabel, '', null, "MAX($kolom) AS hoogsteNummer");
 
-    // print_r($sql);
-    // echo $sql[0]['hoogstePassagiernummer'] + 1;
-    $hoogsteNummer = $sql[0]['hoogstePassagiernummer'] + 1;
-    return $hoogsteNummer;
-}
-
-function bepaalHoogsteVluchtnummer()
-{
-    $db = maakVerbinding();
-    $sql = krijgTabel("Vlucht", '', null, "MAX(vluchtnummer) AS hoogsteVluchtnummer");
-
-    // print_r($sql);
-    // echo $sql[0]['hoogsteVluchtnummer'] + 1;
-    $hoogsteNummer = $sql[0]['hoogsteVluchtnummer'] + 1;
+    $hoogsteNummer = $sql[0]['hoogsteNummer'] + 1;
     return $hoogsteNummer;
 }
 
@@ -168,7 +155,7 @@ function registreren($vluchtnummer, $passagiernummer, $wachtwoord, $naam, $gende
 {
     $db = maakVerbinding();
 
-    if (!isUniekPassagiernummer($passagiernummer)) {
+    if (!isUniekNummer('Passagier', 'passagiernummer', $passagiernummer)) {
         throw new Exception('Duplicate passagiernummer detected. Please close the site and try again.');
     }
 

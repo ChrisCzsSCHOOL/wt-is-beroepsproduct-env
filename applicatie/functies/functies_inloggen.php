@@ -104,7 +104,7 @@ function maakRegistratieformulier()
     <h2>Aanmelden</h2>
     <p>Meld je aan om <em>klant</em> te worden!</p>
     
-    <h3>Bij aanmelding wordt u passagiernummer: '. bepaalHoogstePassagiernummer() .'</h3>
+    <h3>Bij aanmelding wordt u passagiernummer: '. bepaalHoogsteNummer("Passagier", "passagiernummer") .'</h3>
 
         <div class="gridform">
             <form method="POST" action="">
